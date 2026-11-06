@@ -1,0 +1,9 @@
+# Release builds
+dist/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

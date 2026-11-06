@@ -1,0 +1,70 @@
+[size=5][b]What Drops Here?[/b] [color=#FF8800](Beta)[/color][/size]
+
+[i]English: Remembers what every loot source (resource nodes, containers, corpses, critters, pickpocketing, theft) has dropped for you so far and shows it next to the crosshair. Beta, German texts only for now – English is planned.[/i]
+
+Merkt sich, was dir jede Beutequelle bisher gegeben hat, und zeigt es neben dem Fadenkreuz an – bevor du plünderst.
+
+Eine vollständige Loot-Tabelle wie in anderen Spielen gibt es in ESO nicht: Fast jede Quelle kann fast alles droppen, und vieles hängt von Zone und Level ab. What Drops Here? sammelt deshalb [b]deine eigene Statistik[/b], Quelle für Quelle.
+
+[size=4][b]Was erfasst wird[/b][/size]
+[list]
+[*][b]Rohstoffvorkommen[/b] mit Hauptrohstoff und Beifang (Kernholz, Stilmaterial, Härtungsmittel …)
+[*][b]Truhen und Behälter[/b]: Truhen, Säcke, Fässer, Kisten, Rucksäcke
+[*][b]Leichen[/b] von Gegnern, Tieren und NPCs
+[*][b]Kleintiere[/b], die du mit „Nehmen" einsammelst
+[*][b]Taschendiebstahl[/b] und [b]Diebstahl[/b] aus fremden Behältern – getrennt gespeichert
+[*][b]Spuren[/b] (Antiquitäten)
+[/list]
+Jeder Fund wird mit Item-ID und Kategorie gespeichert, pro Quelle und Zone, für alle Charaktere deines Accounts.
+
+[size=4][b]Anzeige am Fadenkreuz[/b][/size]
+[list]
+[*]Wie oft geplündert, Ø Gold, und je Eintrag Menge und Anteil der Plünderungen in Prozent
+[*]Auch bei [b]lebenden[/b] Gegnern, Tieren und NPCs (außerhalb des Kampfes)
+[*]Im Kampf ausgeblendet
+[*]Filter nach Qualität und nach Art der Quelle: Feinde, Truhen und Behälter, Rohstoffe, Kleintiere und Sonstiges, Diebstahl
+[*][b]Alle Einstellungen betreffen nur die Anzeige[/b] – gespeichert wird immer alles
+[/list]
+
+[size=4][b]Befehle[/b][/size]
+[list]
+[*][b]/wdh_menu[/b] – Einstellungen (benötigt LibAddonMenu-2.0)
+[*][b]/wdh[/b] – Statistik der zuletzt geplünderten Quelle, [b]/wdh <Name>[/b] – Quelle suchen
+[*][b]/wdh_zone[/b], [b]/wdh_zones[/b] – Quellen der Zone, Zonen mit Daten
+[*][b]/wdh_hud[/b], [b]/wdh_units[/b], [b]/wdh_show 0-5[/b], [b]/wdh_names 0-5[/b] – Anzeige
+[*][b]/wdh_debug[/b] – Debug-Ausgabe, [b]/wdh_reset ja[/b] – alle Daten löschen
+[/list]
+
+[size=4][b]Bekannte Einschränkungen[/b][/size]
+[list]
+[*][b]Flächenplündern:[/b] Fasst das Spiel mehrere Leichen in einem Lootfenster zusammen, nennt es nur einen Namen. Solche Plünderungen werden getrennt als „Sammelplünderung" gespeichert und verfälschen die Einzelquellen nicht. Für genaue Zahlen pro Gegner: Flächenplündern in den Spieleinstellungen abschalten.
+[*][b]Nicht jeder Gegner[/b] wird vom Spiel unter dem Fadenkreuz erkannt; dann bleibt die Anzeige leer.
+[*][b]Gleichnamige Quellen[/b] einer Zone werden zusammengefasst – gewollt, so entsteht die Statistik.
+[*][b]Normal und Veteran[/b] werden in Verliesen und Prüfungen noch nicht unterschieden.
+[*]Gespeichert wird beim Ausloggen, bei /reloadui und beim normalen Beenden – nicht bei einem Absturz.
+[*][b]Nur deutsche Texte.[/b]
+[/list]
+
+[size=4][b]Getestet mit[/b][/size]
+Much Smarter AutoLoot, Smarter AutoLoot. Erfasst wird, was eine Quelle [i]angeboten[/i] hat – die Filter deines Auto-Loot-Addons verfälschen die Statistik nicht.
+
+[size=4][b]Geplant[/b][/size]
+[list]
+[*]Datenbanken mehrerer Spieler zusammenführen (externes Werkzeug, ähnlich HarvestMapData)
+[*]Feinere Anzeige, z. B. Spanne Minimum–Maximum für Rohstoffe
+[*]Heatmap für Rohstoffe und Set-Gegenstände zum Farmen
+[*]Englische Texte
+[/list]
+
+[size=4][b]Beta-Rückmeldung[/b][/size]
+Besonders gesucht: Berichte aus Verliesen, Prüfungen, von Weltbossen, Taschendiebstahl, Diebstahl, Spuren, Gamepad-Modus und mit anderen Auto-Loot-Addons.
+[list=1]
+[*]Debug-Ausgabe einschalten: [b]/wdh_debug[/b] oder im Menü unter „Entwicklung"
+[*]Wie gewohnt plündern – im Chat steht zu jeder Plünderung Quelle, Zone, Art und jedes Item mit Kategorie
+[*]Fällt etwas auf (falsche Quelle, falsche Kategorie, fehlende Beute, Lua-Fehler): die Chatzeilen mit kurzer Beschreibung hier in die Kommentare
+[/list]
+
+[size=4][b]Abhängigkeiten[/b][/size]
+[list]
+[*]Optional: [url=https://www.esoui.com/downloads/info7-LibAddonMenu.html]LibAddonMenu-2.0[/url] für das Einstellungsmenü
+[/list]

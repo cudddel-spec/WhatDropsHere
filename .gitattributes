@@ -1,0 +1,8 @@
+* text=auto
+*.png binary
+
+# Not part of the addon download
+docs/ export-ignore
+tools/ export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
