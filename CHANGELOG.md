@@ -4,6 +4,8 @@
 
 - **Englische Texte.** Englisch ist jetzt Standard; im deutschen Client bleibt alles deutsch.
   Andere Client-Sprachen (Französisch, Japanisch …) zeigen Englisch.
+- Lootfenster ohne Namen (z. B. die Truhe am Dunklen Anker): Aktualisierungen beim Nehmen der Items
+  gehören jetzt zur selben Plünderung, statt als namenlose Plünderung verworfen zu werden.
 - `/wdh_reset yes` löscht die Daten in jeder Sprache (im deutschen Client weiterhin auch `/wdh_reset ja`).
 
 ## 0.2.0-beta (06.11.2026)

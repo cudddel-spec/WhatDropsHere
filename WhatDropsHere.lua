@@ -302,6 +302,7 @@ local function NewSession(name, targetType, kind, isOwned)
         zoneId     = zoneId,
         targetType = targetType,
         aoe        = aoe,
+        startedAt  = Now(),
         gold       = 0,
         seen       = {},
         itemIds    = {},  -- angebotene Item-IDs (fuer den Abgleich mit LOOT_RECEIVED)
@@ -490,9 +491,16 @@ local function OnLootUpdated()
     local rawName, targetType, _, isOwned = GetLootTargetInfo()
     local name = FormatTargetName(rawName, targetType)
 
-    -- Manche Behaelter liefern im Lootfenster keinen Namen: dann die letzte Interaktion nehmen
-    if name == "" and WDH_Interact.name and Now() - WDH_Interact.at <= INTERACT_VALID_MS then
-        name = WDH_Interact.name
+    -- Manche Behaelter liefern im Lootfenster keinen Namen (z. B. die Truhe am Dunklen Anker).
+    -- Gibt es seit Beginn der offenen Sitzung keine neue Interaktion, ist es dasselbe Fenster
+    -- (z. B. Update nach dem Nehmen eines Items); sonst die letzte Interaktion nehmen.
+    if name == "" then
+        local recent = WDH_Interact.name and Now() - WDH_Interact.at <= INTERACT_VALID_MS
+        if WDH_Session and not (recent and WDH_Interact.at > WDH_Session.startedAt) then
+            name = WDH_Session.name
+        elseif recent then
+            name = WDH_Interact.name
+        end
     end
 
     if WDH_Session and WDH_Session.name ~= name then
