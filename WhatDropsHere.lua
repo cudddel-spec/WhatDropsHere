@@ -102,6 +102,12 @@ end
 -- Laufende Pluender-Sitzung (nil, wenn kein Lootfenster offen)
 local WDH_Session = nil
 
+-- Abgeschlossenes Lootfenster, das schon leer war, als wir es lesen konnten:
+-- Ein Auto-Loot-Addon (z. B. Much Smarter AutoLoot) war schneller, hat alles genommen und das
+-- Fenster geschlossen. Die Beute kommt danach noch ueber LOOT_RECEIVED bzw. CURRENCY_UPDATE an
+-- und wird hier gesammelt, bevor die Sitzung gespeichert wird.
+local WDH_Pending = nil
+
 -- Zuletzt gespeicherte Quelle, fuer verspaetete Spuren und /wdh ohne Argument
 local WDH_Last = {
     zoneId   = nil,
@@ -491,11 +497,35 @@ end
 -- -----------------------------------------------------------------------------
 
 -- Laufende Sitzung speichern (LOOT_CLOSED, Zeitueberschreitung, Ladebildschirm)
+local function FinishPending()
+    EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_Pending")
+    if not WDH_Pending then return end
+    local session = WDH_Pending
+    WDH_Pending = nil
+    CommitSession(session)
+end
+
 local function FinishSession()
     EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_SessionTimeout")
     if not WDH_Session then return end
-    CommitSession(WDH_Session)
+    local session = WDH_Session
     WDH_Session = nil
+    if session.emptyWindow then
+        -- Beute ist noch unterwegs: kurz sammeln, dann speichern
+        FinishPending()
+        WDH_Pending = session
+        EVENT_MANAGER:RegisterForUpdate(ADDON_NAME .. "_Pending", RECEIVED_GRACE_MS, FinishPending)
+    else
+        CommitSession(session)
+    end
+end
+
+-- Sitzung, die Beute aus LOOT_RECEIVED/CURRENCY_UPDATE uebernimmt (nur bei leer vorgefundenem Fenster)
+local function LateTarget()
+    if WDH_Session then
+        return WDH_Session.emptyWindow and WDH_Session or nil
+    end
+    return WDH_Pending
 end
 
 -- Im Test kam LOOT_CLOSED nicht immer (vermutlich wenn ein Auto-Loot-Addon das Fenster schliesst).
@@ -537,13 +567,22 @@ local function OnLootUpdated()
         FinishSession()
     end
     if not WDH_Session then
+        FinishPending()
         WDH_Session = NewSession(name, targetType, "loot", isOwned)
+        -- Fenster ohne Ziel und ohne Inhalt: ein Auto-Loot-Addon hat es vor uns geleert und geschlossen
+        if rawName == "" and GetNumLootItems() == 0 then
+            WDH_Session.emptyWindow = true
+            WDH_Session.lines[#WDH_Session.lines + 1] = WDH_STRINGS.DEBUG_LATE
+        end
         -- Gleiche Quelle wie zuletzt: liegen gebliebene Reste nicht erneut zaehlen
         if WDH_Last.lootKey == WDH_Session.key then
             WDH_Session.prevSeen = WDH_Last.lootSeen
         end
     end
     ReadLootList(WDH_Session)
+    if WDH_Session.emptyWindow and (next(WDH_Session.seen) or WDH_Session.gold > 0) then
+        WDH_Session.emptyWindow = false
+    end
     ArmSessionTimeout()
 end
 
@@ -605,12 +644,24 @@ local function OnInteractionStart()
     dbg(string.format(WDH_STRINGS.DEBUG_INTERACT, tostring(action), WDH_Interact.name))
 end
 
+-- Gold, das ein Auto-Loot-Addon aus einem leer vorgefundenen Fenster genommen hat
+local function OnMoneyUpdate(_, newMoney, oldMoney, reason)
+    if reason ~= CURRENCY_CHANGE_REASON_LOOT and reason ~= CURRENCY_CHANGE_REASON_LOOT_STOLEN then return end
+    local late = LateTarget()
+    if late and newMoney > oldMoney then
+        late.gold = late.gold + (newMoney - oldMoney)
+    end
+end
+
 local function OnLootReceived(_, _, itemLink, quantity, _, lootType, isSelf, isPickpocketLoot, _, itemId)
     if not isSelf then return end
 
     -- Spuren: itemId ist hier die Antiquitaeten-ID
     if lootType == LOOT_TYPE_ANTIQUITY_LEAD then
-        if WDH_Session then
+        local late = LateTarget()
+        if late then
+            AddLead(late, itemId)
+        elseif WDH_Session then
             AddLead(WDH_Session, itemId)
         elseif Now() - WDH_Last.closedAt <= RECEIVED_GRACE_MS then
             AddLeadToLastRecord(itemId)
@@ -635,6 +686,13 @@ local function OnLootReceived(_, _, itemLink, quantity, _, lootType, isSelf, isP
             AddItem(session, itemLink, quantity)
         end
         CommitSession(session)
+        return
+    end
+
+    -- Lootfenster war schon leer: Beute hier zaehlen
+    local late = LateTarget()
+    if late then
+        if lootType == LOOT_TYPE_ITEM then AddItem(late, itemLink, quantity) end
         return
     end
 
@@ -979,8 +1037,10 @@ local function RegisterLootTracking()
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_LootClosed",   EVENT_LOOT_CLOSED,   OnLootClosed)
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_LootReceived", EVENT_LOOT_RECEIVED, OnLootReceived)
     -- Vor Ladebildschirm, /reloadui und Logout offene Sitzungen sichern
+    EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_Money",        EVENT_MONEY_UPDATE,  OnMoneyUpdate)
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_Deactivated",  EVENT_PLAYER_DEACTIVATED, function()
         FinishSession()
+        FinishPending()
         FinishDirectSession()
     end)
     -- Quelle fuer Beute ohne Lootfenster merken. Der Hook gibt nichts zurueck,

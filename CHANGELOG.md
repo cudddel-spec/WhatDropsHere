@@ -10,6 +10,8 @@
   `/wdh_show` setzt die Schwelle für alle eingeschalteten Arten.
 - **Englische Texte.** Englisch ist jetzt Standard; im deutschen Client bleibt alles deutsch.
   Andere Client-Sprachen (Französisch, Japanisch …) zeigen Englisch.
+- Auto-Loot schneller als What Drops Here?: Hat z. B. Much Smarter AutoLoot das Lootfenster schon geleert und geschlossen,
+  bevor es gelesen werden konnte, werden Items und Gold jetzt beim Eingang gezählt, statt verloren zu gehen.
 - Lootfenster ohne Namen (z. B. die Truhe am Dunklen Anker): Aktualisierungen beim Nehmen der Items
   gehören jetzt zur selben Plünderung, statt als namenlose Plünderung verworfen zu werden.
 - `/wdh_reset yes` löscht die Daten in jeder Sprache (im deutschen Client weiterhin auch `/wdh_reset ja`).

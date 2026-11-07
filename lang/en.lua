@@ -26,6 +26,7 @@ WDH_STRINGS = {
     -- %s = item link, %d = count
     DEBUG_AFTER_WINDOW  = "Loot shortly after loot window, but not in its list (not counted): %s x%d",
     DEBUG_TIMEOUT       = "No LOOT_CLOSED after 5 sec., session saved anyway.",
+    DEBUG_LATE          = "|cFFAA00Loot window was already empty (auto-loot was faster), counting the received loot:|r",
 
     -- Statistics (/wdh)
     -- %s = source, %s = zone, %d = loots, %d = gold

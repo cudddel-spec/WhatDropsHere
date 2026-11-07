@@ -29,6 +29,7 @@ Override(WDH_STRINGS, {
     DEBUG_DURING_WINDOW = "Beute während Lootfenster, aber nicht in dessen Liste (nicht gezählt): %s x%d (Fenster: %s)",
     DEBUG_AFTER_WINDOW  = "Beute kurz nach Lootfenster, aber nicht in dessen Liste (nicht gezählt): %s x%d",
     DEBUG_TIMEOUT       = "Kein LOOT_CLOSED nach 5 Sek., Sitzung trotzdem gespeichert.",
+    DEBUG_LATE          = "|cFFAA00Lootfenster war schon leer (Auto-Loot war schneller), Beute aus dem Eingang gezählt:|r",
 
     -- Statistik (/wdh)
     -- %s = Quelle, %s = Zone, %d = Plünderungen, %d = Gold

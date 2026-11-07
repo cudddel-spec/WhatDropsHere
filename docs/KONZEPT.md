@@ -270,7 +270,12 @@ Account-weit bleiben nur Daten und `settings.debug`. Kopieren im Menü, Liste ü
 
 ## Offene Fragen (im Spiel prüfen)
 
-- [ ] Ist die Lootliste vollständig lesbar, wenn MSAL bzw. Smarter AutoLoot im selben Event schon `LootItemById()` aufgerufen hat?
+- [x] Ist die Lootliste vollständig lesbar, wenn MSAL bzw. Smarter AutoLoot im selben Event schon `LootItemById()` aufgerufen hat?
+  Meist ja (LootItemById ist eine Anfrage an den Server). **Aber:** MSAL meldet seinen LOOT_UPDATED-Handler bei
+  jeder Entsorgung ab und wieder an, die Reihenfolge der Handler ist danach zufällig. Läuft MSAL zuerst und ruft
+  `EndLooting()`, finden wir ein leeres Fenster ohne Ziel (`targetType=0`, keine Items, Gold 0). Seit 0.3.0-beta:
+  solche Sitzungen warten 2 Sek. und zählen Items aus LOOT_RECEIVED und Gold aus EVENT_MONEY_UPDATE (Grund LOOT).
+  Beobachtet 07.11.2026 bei „Schwerer Sack" und „Fleischfliegen" (Einfangen) in der Alik'r-Wüste.
 - [ ] Welchen Namen liefert `GetLootTargetInfo()` bei einer Sammelplünderung (AoE-Loot)? Den der angeklickten Leiche?
 - [ ] Gibt es bei AoE-Loot irgendeinen Hinweis, wie viele Leichen beteiligt waren?
 - [ ] Fadenkreuz: Erscheint die Anzeige bei Vorkommen, Behältern, Leichen und Kleintieren? Passt die Position, stört sie?
