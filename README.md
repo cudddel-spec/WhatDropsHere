@@ -132,7 +132,7 @@ Optional: [LibAddonMenu-2.0](https://www.esoui.com/downloads/info7-LibAddonMenu.
 
 - Die Addon-Dateien liegen direkt im Hauptordner des Repositorys; ein Klon im `AddOns`-Ordner lässt sich sofort im Spiel testen.
 - `python tools/build_release.py` baut `dist/WhatDropsHere-<Version>.zip` mit nur den Dateien, die Spieler brauchen.
-- `docs/` enthält das Konzept mit Testprotokollen und offenen Fragen sowie die ESOUI-Beschreibungen (Deutsch und Englisch).
+- `docs/` enthält das Konzept mit Testprotokollen und offenen Fragen sowie die ESOUI-Beschreibungen (Deutsch und Englisch) und die Änderungsliste für ESOUI.
 - Fehler und Ideen gern als [Issue](https://github.com/cudddel-spec/WhatDropsHere/issues).
 
 ## Lizenz

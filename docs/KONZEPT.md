@@ -176,7 +176,8 @@ Art der Quelle (`rec.type`), erkannt beim Plündern:
   Eigener Schlüssel `name#theft`, damit eine gestohlene „Kiste" die freien Kisten nicht verfälscht.
   Die Anzeige sucht bei einem fremden Ziel am Fadenkreuz den `#theft`-Eintrag.
 - `other`: Taschendiebstahl und „Nehmen" ohne Lootfenster
-- `container` ist der Rückfall und überschreibt eine einmal erkannte Art nicht. Alte Einträge ohne Art werden immer angezeigt.
+- `container` ist der Rückfall und überschreibt eine einmal erkannte Art nicht. Alte Einträge ohne Art nutzen die
+  niedrigste eingeschaltete Schwelle.
 
 ## Koordinaten
 
@@ -233,6 +234,16 @@ Art der Quelle (`rec.type`), erkannt beim Plündern:
 - Offen: Wie Flächenplündern in ESO genau wirkt (ein Fenster für alle oder Beute der Nachbarn direkt ins Inventar).
   Neue Debug-Zeile „Beute während Lootfenster, aber nicht in dessen Liste" macht den zweiten Fall sichtbar.
 - Nächster Test: zwei **verschiedene** Gegnertypen dicht beieinander erledigen, dann einen plündern.
+
+**07.11.2026, Test 0.3.0-beta (deutscher Client):**
+- Dunkler Anker (Alik'r-Wüste): Die Belohnungstruhe heißt „Truhe" und liefert im Lootfenster keinen Namen.
+  Vor dem Fix wurde beim Nehmen nach mehr als 3 Sek. eine namenlose Plünderung begonnen und verworfen
+  (Truhe selbst richtig gezählt). Nach dem Fix: nur noch ein Block „Truhe", keine „nicht gezählt"-Zeilen.
+- Einstellungen je Charakter: Umstellung der 0.2-Einstellungen, eigene Werte je Charakter, Kopieren von einem
+  anderen Charakter, Original bleibt unverändert – alles wie erwartet.
+- Schwelle je Art: „Lila" bei Feinden blendet bei Leichen und lebenden Gegnern darunter aus, Truhen/Rohstoffe
+  behalten ihre Schwelle; „Aus" blendet die Art komplett aus.
+- Noch nicht im Spiel geprüft: englischer Client (Begriffe „Clothing material", „Temper", „Bait").
 
 ## Beta 0.2.0 (06.11.2026)
 

@@ -1,0 +1,24 @@
+[size=4][b]0.3.0-beta[/b] (2026-11-07)[/size]
+[list]
+[*][b]English texts.[/b] English is now the default; the German client stays German. Other client languages show English.
+[*][b]Display settings per character.[/b] Every character has its own display settings; you can copy the settings of another character in the menu. After the update, all characters start with your previous settings. The recorded data stays shared account-wide.
+[*][b]Quality threshold per source type.[/b] Enemies, chests and containers, resources, critters and other, and theft each get their own threshold ("Off" or from which quality) – e.g. resources from green, enemies from purple. This replaces the previous on/off switches and the shared threshold. [b]/wdh_show[/b] sets the threshold for all enabled types.
+[*]Loot windows without a name (e.g. the Dark Anchor reward chest): updates while taking items now belong to the same loot instead of being discarded as a nameless loot.
+[*][b]/wdh_reset yes[/b] deletes the data in every language.
+[/list]
+
+[size=4][b]0.2.0-beta[/b] (2026-11-06)[/size]
+First public beta.
+
+[size=3][b]Deutsch[/b][/size]
+
+[b]0.3.0-beta[/b] (07.11.2026)
+[list]
+[*][b]Englische Texte.[/b] Englisch ist jetzt Standard; im deutschen Client bleibt alles deutsch.
+[*][b]Anzeige-Einstellungen je Charakter[/b], im Menü von anderen Charakteren übernehmbar. Beim Update starten alle Charaktere mit den bisherigen Einstellungen. Die Daten bleiben für den ganzen Account gemeinsam.
+[*][b]Anzeige-Schwelle je Art der Quelle[/b] („Aus" oder ab welcher Qualität), z. B. Rohstoffe ab grün, Feinde ab lila. Ersetzt die bisherigen Schalter und die gemeinsame Schwelle.
+[*]Lootfenster ohne Namen (z. B. Truhe am Dunklen Anker) werden nicht mehr teilweise als namenlose Plünderung verworfen.
+[*][b]/wdh_reset yes[/b] löscht die Daten in jeder Sprache (im deutschen Client weiterhin auch „ja").
+[/list]
+
+[b]0.2.0-beta[/b] (06.11.2026) – Erste öffentliche Beta.
