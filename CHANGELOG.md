@@ -2,6 +2,12 @@
 
 ## 0.3.0-beta (07.11.2026)
 
+- **Anzeige-Einstellungen je Charakter.** Jeder Charakter hat seine eigene Anzeige; im Menü lassen sich
+  die Einstellungen eines anderen Charakters übernehmen. Beim Update starten alle Charaktere mit den bisherigen Einstellungen.
+  Die Daten bleiben für den ganzen Account gemeinsam.
+- **Anzeige-Schwelle je Art der Quelle.** Feinde, Truhen und Behälter, Rohstoffe, Kleintiere und Sonstiges und Diebstahl
+  haben je eine eigene Schwelle („Aus" oder ab welcher Qualität). Das ersetzt die bisherigen Schalter und die gemeinsame Schwelle.
+  `/wdh_show` setzt die Schwelle für alle eingeschalteten Arten.
 - **Englische Texte.** Englisch ist jetzt Standard; im deutschen Client bleibt alles deutsch.
   Andere Client-Sprachen (Französisch, Japanisch …) zeigen Englisch.
 - Lootfenster ohne Namen (z. B. die Truhe am Dunklen Anker): Aktualisierungen beim Nehmen der Items

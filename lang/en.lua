@@ -65,7 +65,7 @@ WDH_STRINGS = {
     -- Settings
     NAMES_SET           = "|c88FF88[WDH]|r Show names at the crosshair from: %s",
     NAMES_USAGE         = "|cFFFF00[WDH]|r Usage: /wdh_names 0-5 (0 = everything by name, 2 = green and up, 3 = blue and up)",
-    SHOW_SET            = "|c88FF88[WDH]|r Crosshair display threshold: %s",
+    SHOW_SET            = "|c88FF88[WDH]|r Display threshold for all enabled source types: %s",
     SHOW_USAGE          = "|cFFFF00[WDH]|r Usage: /wdh_show 0-5 (0 = everything, 1 = white and up, 3 = blue and up)",
     HUD_ON              = "|c88FF88[WDH]|r Crosshair display ON.",
     HUD_OFF             = "|c88FF88[WDH]|r Crosshair display OFF.",
@@ -89,12 +89,10 @@ WDH_STRINGS.MENU_INTRO            = "Remembers what every loot source has given 
 WDH_STRINGS.MENU_HUD_HEADER       = "Crosshair display"
 WDH_STRINGS.MENU_HUD              = "Enable display"
 WDH_STRINGS.MENU_HUD_TT           = "Shows next to the crosshair what the targeted source has given you so far. Hidden in combat."
-WDH_STRINGS.MENU_SHOW_QUALITY     = "Show from quality"
-WDH_STRINGS.MENU_SHOW_QUALITY_TT  = "Entries below are hidden at the crosshair, but stay recorded."
 WDH_STRINGS.MENU_MAX_LINES        = "Maximum entries"
 WDH_STRINGS.MENU_MAX_LINES_TT     = "Further entries appear as \"+N more\". Full list with /wdh <name>."
 WDH_STRINGS.MENU_TYPES_HEADER     = "Display by source type"
-WDH_STRINGS.MENU_TYPES_INFO       = "For which sources the display appears. Everything is always recorded."
+WDH_STRINGS.MENU_TYPES_INFO       = "Per source type: from which quality entries appear at the crosshair, or \"Off\". Entries below are only hidden, everything is always recorded."
 WDH_STRINGS.MENU_ENEMIES          = "Enemies"
 WDH_STRINGS.MENU_ENEMIES_TT       = "Corpses of enemies, animals and NPCs."
 WDH_STRINGS.MENU_UNITS            = "   also living enemies"
@@ -120,7 +118,22 @@ WDH_STRINGS.MENU_RESET_TT         = "Deletes all collected loot. Settings are ke
 WDH_STRINGS.MENU_RESET_WARNING    = "All collected loot will be deleted permanently."
 WDH_STRINGS.MENU_DEV_HEADER       = "Development"
 WDH_STRINGS.MENU_DEBUG            = "Debug output in chat"
-WDH_STRINGS.MENU_DEBUG_TT         = "Shows every loot with source, type and categories in chat."
+WDH_STRINGS.MENU_DEBUG_TT         = "Shows every loot with source, type and categories in chat. Applies to all characters."
+
+-- Per-character settings
+-- %s = character name
+WDH_STRINGS.MENU_CHAR_INFO        = "The display settings apply to |cFFFFFF%s|r only. Every character has its own."
+WDH_STRINGS.MENU_SHOW_OFF         = "Off"
+WDH_STRINGS.MENU_COPY_HEADER      = "Settings of other characters"
+WDH_STRINGS.MENU_COPY_INFO        = "Copies all display settings of another character to this character."
+WDH_STRINGS.MENU_COPY_FROM        = "Copy from"
+WDH_STRINGS.MENU_COPY_FROM_TT     = "A character appears here once it has logged in with What Drops Here?."
+WDH_STRINGS.MENU_COPY_NONE        = "(no other characters)"
+WDH_STRINGS.MENU_COPY             = "Copy"
+WDH_STRINGS.MENU_COPY_TT          = "Replaces the display settings of this character with those of the selected character."
+WDH_STRINGS.MENU_COPY_WARNING     = "The display settings of this character will be overwritten."
+-- %s = character name
+WDH_STRINGS.COPY_DONE             = "|c88FF88[WDH]|r Display settings copied from %s."
 
 -- Gear slots
 WDH_SLOT_NAMES = {

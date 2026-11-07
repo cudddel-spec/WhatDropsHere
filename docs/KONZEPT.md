@@ -125,7 +125,9 @@ Das Spiel unterscheidet Stoff und Leder nicht über den Itemtyp (beides `ITEMTYP
 
 ### Zwei Schwellwerte (beide nur für die Anzeige)
 
-1. **Anzeigen ab Qualität** (`showQuality`): darunter erscheint ein Eintrag gar nicht am Fadenkreuz
+1. **Anzeigen ab Qualität je Art der Quelle** (`showEnemy`, `showContainer`, `showResource`, `showOther`, `showTheft`;
+   `-1` = Aus): darunter erscheint ein Eintrag gar nicht am Fadenkreuz. Bis 0.2 eine gemeinsame Schwelle `showQuality`
+   plus Schalter `hud<Art>`; beim Update werden sie zur Vorlage für alle Charaktere.
 2. **Mit Namen anzeigen ab Qualität** (`nameQuality`): darunter erscheinen Items der DETAIL_Q-Kategorien in ihrer Kategorie
 
 ### Rohstoffe
@@ -236,6 +238,10 @@ Art der Quelle (`rec.type`), erkannt beim Plündern:
 
 Veröffentlichung als Beta, weil vieles allein nicht absehbar testbar ist. Debug-Ausgabe ist ab dieser Version
 standardmäßig aus (bestehende Einstellungen bleiben). Nur deutsche Texte.
+
+**Einstellungen je Charakter (seit 0.3.0-beta):** `WDH_Saved.chars[GetCurrentCharacterId()] = { name, settings }`.
+Neue Charaktere starten mit `WDH_Saved.template` (die Account-Einstellungen aus 0.2) bzw. den Standardwerten.
+Account-weit bleiben nur Daten und `settings.debug`. Kopieren im Menü, Liste über `GetCharacterInfo` (gelöschte fallen heraus).
 
 **Todos nach der Beta:**
 - [ ] **Datenbanken extern zusammenführen** (ähnlich HarvestMapData): Skript außerhalb des Spiels, Ergebnis als

@@ -22,7 +22,8 @@ Jeder Fund wird mit Item-ID und Kategorie gespeichert, pro Quelle und Zone, für
 [*]Wie oft geplündert, Ø Gold, und je Eintrag Menge und Anteil der Plünderungen in Prozent
 [*]Auch bei [b]lebenden[/b] Gegnern, Tieren und NPCs (außerhalb des Kampfes)
 [*]Im Kampf ausgeblendet
-[*]Filter nach Qualität und nach Art der Quelle: Feinde, Truhen und Behälter, Rohstoffe, Kleintiere und Sonstiges, Diebstahl
+[*]Eigene Qualitäts-Schwelle je Art der Quelle (oder aus): Feinde, Truhen und Behälter, Rohstoffe, Kleintiere und Sonstiges, Diebstahl – z. B. Rohstoffe ab grün, Feinde ab lila
+[*][b]Anzeige-Einstellungen je Charakter[/b], übertragbar von anderen Charakteren; die Daten gelten für den ganzen Account
 [*][b]Alle Einstellungen betreffen nur die Anzeige[/b] – gespeichert wird immer alles
 [/list]
 
@@ -31,7 +32,7 @@ Jeder Fund wird mit Item-ID und Kategorie gespeichert, pro Quelle und Zone, für
 [*][b]/wdh_menu[/b] – Einstellungen (benötigt LibAddonMenu-2.0)
 [*][b]/wdh[/b] – Statistik der zuletzt geplünderten Quelle, [b]/wdh <Name>[/b] – Quelle suchen
 [*][b]/wdh_zone[/b], [b]/wdh_zones[/b] – Quellen der Zone, Zonen mit Daten
-[*][b]/wdh_hud[/b], [b]/wdh_units[/b], [b]/wdh_show 0-5[/b], [b]/wdh_names 0-5[/b] – Anzeige
+[*][b]/wdh_hud[/b], [b]/wdh_units[/b], [b]/wdh_show 0-5[/b], [b]/wdh_names 0-5[/b] – Anzeige (Schwelle je Art im Menü)
 [*][b]/wdh_debug[/b] – Debug-Ausgabe, [b]/wdh_reset ja[/b] – alle Daten löschen
 [/list]
 

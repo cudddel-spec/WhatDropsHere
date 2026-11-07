@@ -37,8 +37,13 @@ Die Statistik gilt pro Quelle und Zone und für alle Charaktere deines Accounts.
 Im Spiel unter *Einstellungen → Erweiterungen → What Drops Here?* oder mit `/wdh_menu` (benötigt LibAddonMenu-2.0).
 
 **Alle Plünderungen werden immer gespeichert.** Die Anzeige-Einstellungen bestimmen nur, was am Fadenkreuz erscheint:
-- Anzeige an/aus, ab welcher Qualität, wie viele Einträge
-- nach Art der Quelle: **Feinde** (auch lebende), **Truhen und Behälter**, **Rohstoffe**, **Kleintiere und Sonstiges**, **Diebstahl**
+- Anzeige an/aus, wie viele Einträge
+- **je Art der Quelle eine eigene Schwelle**: „Aus" oder ab welcher Qualität. Arten: **Feinde** (auch lebende),
+  **Truhen und Behälter**, **Rohstoffe**, **Kleintiere und Sonstiges**, **Diebstahl**.
+  So zeigt z. B. ein Farm-Charakter bei Rohstoffen schon grüne Funde, bei Feinden erst lila.
+
+**Je Charakter:** Jeder Charakter hat seine eigenen Anzeige-Einstellungen; im Menü unter *Einstellungen anderer Charaktere*
+lassen sich die eines anderen übernehmen. Die gesammelten Daten gelten weiterhin für den ganzen Account.
 
 **Mit Namen anzeigen ab Qualität:** darunter erscheinen Items zusammengefasst in ihrer Kategorie, darüber einzeln
 mit Namen. Weil immer alles mit Item-ID gespeichert wird, wirkt die Einstellung sofort auch auf alle bisherigen Funde.
@@ -58,7 +63,7 @@ erscheint bei einem fremden Behälter die Diebstahl-Statistik.
 | `/wdh_zones` | alle Zonen mit gespeicherten Daten |
 | `/wdh_hud` | Anzeige am Fadenkreuz an/aus |
 | `/wdh_units` | Anzeige für lebende Ziele an/aus |
-| `/wdh_show 0-5` | Anzeige-Schwelle (Qualität) |
+| `/wdh_show 0-5` | Anzeige-Schwelle (Qualität) für alle eingeschalteten Arten; einzeln im Menü |
 | `/wdh_names 0-5` | am Fadenkreuz mit Namen ab Qualität, darunter als Kategorie |
 | `/wdh_debug` | Debug-Ausgabe im Chat an/aus |
 | `/wdh_reset ja` | alle Daten löschen (`yes` geht in jeder Sprache) |

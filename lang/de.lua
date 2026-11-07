@@ -68,7 +68,7 @@ Override(WDH_STRINGS, {
     -- Einstellungen
     NAMES_SET           = "|c88FF88[WDH]|r Am Fadenkreuz mit Namen ab: %s",
     NAMES_USAGE         = "|cFFFF00[WDH]|r Verwendung: /wdh_names 0-5 (0 = alles mit Namen, 2 = ab grün, 3 = ab blau)",
-    SHOW_SET            = "|c88FF88[WDH]|r Anzeige-Schwelle am Fadenkreuz: %s",
+    SHOW_SET            = "|c88FF88[WDH]|r Anzeige-Schwelle für alle eingeschalteten Arten von Quellen: %s",
     SHOW_USAGE          = "|cFFFF00[WDH]|r Verwendung: /wdh_show 0-5 (0 = alles, 1 = ab weiß, 3 = ab blau)",
     HUD_ON              = "|c88FF88[WDH]|r Anzeige am Fadenkreuz AN.",
     HUD_OFF             = "|c88FF88[WDH]|r Anzeige am Fadenkreuz AUS.",
@@ -92,12 +92,10 @@ WDH_STRINGS.MENU_INTRO            = "Merkt sich, was dir jede Beutequelle bisher
 WDH_STRINGS.MENU_HUD_HEADER       = "Anzeige am Fadenkreuz"
 WDH_STRINGS.MENU_HUD              = "Anzeige einschalten"
 WDH_STRINGS.MENU_HUD_TT           = "Zeigt neben dem Fadenkreuz, was die anvisierte Quelle dir bisher gegeben hat. Im Kampf ausgeblendet."
-WDH_STRINGS.MENU_SHOW_QUALITY     = "Anzeigen ab Qualität"
-WDH_STRINGS.MENU_SHOW_QUALITY_TT  = "Einträge darunter werden am Fadenkreuz ausgeblendet, bleiben aber gespeichert."
 WDH_STRINGS.MENU_MAX_LINES        = "Einträge höchstens"
 WDH_STRINGS.MENU_MAX_LINES_TT     = "Weitere Einträge erscheinen als \"+N weitere\". Vollständige Liste mit /wdh <Name>."
 WDH_STRINGS.MENU_TYPES_HEADER     = "Anzeige nach Art der Quelle"
-WDH_STRINGS.MENU_TYPES_INFO       = "Für welche Quellen die Anzeige erscheint. Gespeichert werden immer alle."
+WDH_STRINGS.MENU_TYPES_INFO       = "Je Art der Quelle: ab welcher Qualität Einträge am Fadenkreuz erscheinen, oder \"Aus\". Darunter liegende Einträge werden nur ausgeblendet, gespeichert wird immer alles."
 WDH_STRINGS.MENU_ENEMIES          = "Feinde"
 WDH_STRINGS.MENU_ENEMIES_TT       = "Leichen von Gegnern, Tieren und NPCs."
 WDH_STRINGS.MENU_UNITS            = "   auch lebende Feinde"
@@ -123,7 +121,22 @@ WDH_STRINGS.MENU_RESET_TT         = "Löscht alle gesammelten Plünderungen. Die
 WDH_STRINGS.MENU_RESET_WARNING    = "Alle gesammelten Plünderungen werden unwiderruflich gelöscht."
 WDH_STRINGS.MENU_DEV_HEADER       = "Entwicklung"
 WDH_STRINGS.MENU_DEBUG            = "Debug-Ausgabe im Chat"
-WDH_STRINGS.MENU_DEBUG_TT         = "Zeigt jede Plünderung mit Quelle, Art und Kategorien im Chat."
+WDH_STRINGS.MENU_DEBUG_TT         = "Zeigt jede Plünderung mit Quelle, Art und Kategorien im Chat. Gilt für alle Charaktere."
+
+-- Einstellungen je Charakter
+-- %s = Name des Charakters
+WDH_STRINGS.MENU_CHAR_INFO        = "Die Anzeige-Einstellungen gelten nur für |cFFFFFF%s|r. Jeder Charakter hat seine eigenen."
+WDH_STRINGS.MENU_SHOW_OFF         = "Aus"
+WDH_STRINGS.MENU_COPY_HEADER      = "Einstellungen anderer Charaktere"
+WDH_STRINGS.MENU_COPY_INFO        = "Übernimmt alle Anzeige-Einstellungen eines anderen Charakters für diesen Charakter."
+WDH_STRINGS.MENU_COPY_FROM        = "Kopieren von"
+WDH_STRINGS.MENU_COPY_FROM_TT     = "Ein Charakter erscheint hier, sobald er einmal mit What Drops Here? eingeloggt war."
+WDH_STRINGS.MENU_COPY_NONE        = "(keine anderen Charaktere)"
+WDH_STRINGS.MENU_COPY             = "Übernehmen"
+WDH_STRINGS.MENU_COPY_TT          = "Ersetzt die Anzeige-Einstellungen dieses Charakters durch die des gewählten Charakters."
+WDH_STRINGS.MENU_COPY_WARNING     = "Die Anzeige-Einstellungen dieses Charakters werden überschrieben."
+-- %s = Name des Charakters
+WDH_STRINGS.COPY_DONE             = "|c88FF88[WDH]|r Anzeige-Einstellungen von %s übernommen."
 
 -- Plätze für Ausrüstung
 Override(WDH_SLOT_NAMES, {

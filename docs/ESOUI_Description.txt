@@ -26,7 +26,8 @@ Every find is stored with its item ID and category, per source and zone, account
 [*]How often you looted the source, average gold, and for each entry the amount and the share of loots it appeared in
 [*]Also works for [b]living[/b] enemies, animals and NPCs (outside of combat)
 [*]Hidden in combat
-[*]Filters by item quality and by source type: enemies, chests and containers, resources, critters and other, theft
+[*]A quality threshold per source type (or off): enemies, chests and containers, resources, critters and other, theft – e.g. resources from green, enemies from purple
+[*][b]Display settings per character[/b], can be copied from another character; the recorded data is shared account-wide
 [*][b]All settings only affect the display[/b] – everything is always recorded, and changes apply to past data as well
 [/list]
 
@@ -35,7 +36,7 @@ Every find is stored with its item ID and category, per source and zone, account
 [*][b]/wdh_menu[/b] – settings (requires LibAddonMenu-2.0)
 [*][b]/wdh[/b] – statistics of the last looted source, [b]/wdh <name>[/b] – search a source (current zone first, then all zones)
 [*][b]/wdh_zone[/b], [b]/wdh_zones[/b] – sources in the current zone, zones with data
-[*][b]/wdh_hud[/b], [b]/wdh_units[/b], [b]/wdh_show 0-5[/b], [b]/wdh_names 0-5[/b] – display options
+[*][b]/wdh_hud[/b], [b]/wdh_units[/b], [b]/wdh_show 0-5[/b], [b]/wdh_names 0-5[/b] – display options (threshold per source type in the menu)
 [*][b]/wdh_debug[/b] – debug output in chat, [b]/wdh_reset yes[/b] – delete all data
 [/list]
 

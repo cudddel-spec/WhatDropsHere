@@ -51,20 +51,49 @@ WhatDropsHere = {
 local WDH = WhatDropsHere
 local CAT = WDH_Categories
 
-local DEFAULT_SETTINGS = {
+-- Schwelle je Art der Quelle: Anzeige fuer diese Art aus
+local SHOW_OFF = -1
+
+-- Einstellungen fuer den ganzen Account
+local DEFAULT_ACCOUNT = {
     debug         = false,                        -- Debug-Ausgabe im Chat (/wdh_debug, Menue)
-    nameQuality   = ITEM_DISPLAY_QUALITY_ARCANE,  -- am Fadenkreuz mit Namen ab blau, darunter als Kategorie
+}
+
+-- Anzeige-Einstellungen, je Charakter gespeichert (gespeichert wird immer alles)
+local DEFAULT_DISPLAY = {
     hud           = true,                         -- Anzeige am Fadenkreuz
     hudUnits      = true,                         -- auch fuer lebende Ziele (Gegner, Tiere, NPCs)
-    -- Anzeige nach Art der Quelle (gespeichert wird immer alles)
-    hudEnemies    = true,                         -- Feinde: Leichen und lebende Ziele
-    hudContainers = true,                         -- Truhen und Behaelter
-    hudResources  = true,                         -- Rohstoffvorkommen
-    hudOther      = true,                         -- Kleintiere, einzelne Gegenstaende, Sonstiges
-    hudTheft      = true,                         -- Diebstahl aus fremdem Besitz
-    showQuality   = ITEM_DISPLAY_QUALITY_NORMAL,  -- Anzeige-Schwelle: ab weiss (Trash ausgeblendet)
+    nameQuality   = ITEM_DISPLAY_QUALITY_ARCANE,  -- am Fadenkreuz mit Namen ab blau, darunter als Kategorie
     hudMaxLines   = 6,                            -- Eintraege am Fadenkreuz, Rest als "+N weitere"
+    -- Anzeige-Schwelle je Art der Quelle (Qualitaet oder SHOW_OFF); ab weiss = Trash ausgeblendet
+    showEnemy     = ITEM_DISPLAY_QUALITY_NORMAL,  -- Feinde: Leichen und lebende Ziele
+    showContainer = ITEM_DISPLAY_QUALITY_NORMAL,  -- Truhen und Behaelter
+    showResource  = ITEM_DISPLAY_QUALITY_NORMAL,  -- Rohstoffvorkommen
+    showOther     = ITEM_DISPLAY_QUALITY_NORMAL,  -- Kleintiere, einzelne Gegenstaende, Sonstiges
+    showTheft     = ITEM_DISPLAY_QUALITY_NORMAL,  -- Diebstahl aus fremdem Besitz
 }
+
+-- Bis 0.2: Schalter je Art + eine gemeinsame Schwelle (Account-weit)
+local LEGACY_TYPE_SWITCH = {
+    showEnemy     = "hudEnemies",
+    showContainer = "hudContainers",
+    showResource  = "hudResources",
+    showOther     = "hudOther",
+    showTheft     = "hudTheft",
+}
+
+local function FillDefaults(target, defaults)
+    for k, v in pairs(defaults) do
+        if target[k] == nil then target[k] = v end
+    end
+end
+
+local function CopyDisplay(source)
+    local copy = {}
+    for k in pairs(DEFAULT_DISPLAY) do copy[k] = source[k] end
+    FillDefaults(copy, DEFAULT_DISPLAY)
+    return copy
+end
 
 -- -----------------------------------------------------------------------------
 -- Interne Zustaende
@@ -661,6 +690,40 @@ WDH.CatName        = CatName
 WDH.ColorByQuality = ColorByQuality
 WDH.BestQuality    = BestQuality
 WDH.QualityName    = QualityName
+WDH.SHOW_OFF       = SHOW_OFF
+
+-- Anzeige-Einstellungen des eingeloggten Charakters
+function WDH.Settings()
+    return WDH_Saved.chars[WDH.charId].settings
+end
+
+-- Andere Charaktere des Accounts mit gespeicherten Einstellungen: Namen und IDs, sortiert.
+-- Geloeschte Charaktere fallen heraus, umbenannte erscheinen mit aktuellem Namen.
+function WDH.OtherCharacters()
+    local list = {}
+    for i = 1, GetNumCharacters() do
+        local name, _, _, _, _, _, id = GetCharacterInfo(i)
+        if id ~= WDH.charId and WDH_Saved.chars[id] then
+            list[#list + 1] = { name = zo_strformat("<<1>>", name), id = id }
+        end
+    end
+    table.sort(list, function(a, b) return a.name < b.name end)
+    local names, ids = {}, {}
+    for _, c in ipairs(list) do
+        names[#names + 1] = c.name
+        ids[#ids + 1]     = c.id
+    end
+    return names, ids
+end
+
+-- Uebernimmt die Anzeige-Einstellungen eines anderen Charakters
+function WDH.CopySettingsFrom(charId)
+    local source = WDH_Saved.chars[charId]
+    if not source or charId == WDH.charId then return false end
+    WDH_Saved.chars[WDH.charId].settings = CopyDisplay(source.settings)
+    if WDH.Hud then WDH.Hud:Invalidate() end
+    return true
+end
 
 function WDH:PrintRecord(zoneId, rec)
     local header = string.format(WDH_STRINGS.RECORD_HEADER, rec.name, ZoneName(zoneId), rec.loots, rec.gold)
@@ -809,13 +872,14 @@ local function RegisterSlashCommands()
     end
 
     SLASH_COMMANDS["/wdh_hud"] = function()
-        WDH_Saved.settings.hud = not WDH_Saved.settings.hud
-        d(WDH_Saved.settings.hud and WDH_STRINGS.HUD_ON or WDH_STRINGS.HUD_OFF)
+        WDH.Settings().hud = not WDH.Settings().hud
+        d(WDH.Settings().hud and WDH_STRINGS.HUD_ON or WDH_STRINGS.HUD_OFF)
     end
 
     SLASH_COMMANDS["/wdh_units"] = function()
-        WDH_Saved.settings.hudUnits = not WDH_Saved.settings.hudUnits
-        d(WDH_Saved.settings.hudUnits and WDH_STRINGS.HUD_UNITS_ON or WDH_STRINGS.HUD_UNITS_OFF)
+        WDH.Settings().hudUnits = not WDH.Settings().hudUnits
+        WDH.Hud:Invalidate()
+        d(WDH.Settings().hudUnits and WDH_STRINGS.HUD_UNITS_ON or WDH_STRINGS.HUD_UNITS_OFF)
     end
 
     SLASH_COMMANDS["/wdh_show"] = function(args)
@@ -824,7 +888,11 @@ local function RegisterSlashCommands()
             d(WDH_STRINGS.SHOW_USAGE)
             return
         end
-        WDH_Saved.settings.showQuality = quality
+        -- Gilt fuer alle eingeschalteten Arten; einzeln im Menue
+        local settings = WDH.Settings()
+        for key in pairs(LEGACY_TYPE_SWITCH) do
+            if settings[key] ~= SHOW_OFF then settings[key] = quality end
+        end
         WDH.Hud:Invalidate()
         d(string.format(WDH_STRINGS.SHOW_SET, ColorByQuality(quality, QualityName(quality))))
     end
@@ -840,7 +908,7 @@ local function RegisterSlashCommands()
             d(WDH_STRINGS.NAMES_USAGE)
             return
         end
-        WDH_Saved.settings.nameQuality = quality
+        WDH.Settings().nameQuality = quality
         WDH.Hud:Invalidate()
         d(string.format(WDH_STRINGS.NAMES_SET, ColorByQuality(quality, QualityName(quality))))
     end
@@ -860,13 +928,45 @@ end
 -- Initialisierung
 -- -----------------------------------------------------------------------------
 
+-- Bis 0.2 lagen die Anzeige-Einstellungen Account-weit in WDH_Saved.settings.
+-- Sie werden zur Vorlage, mit der jeder Charakter beim ersten Einloggen startet.
+local function MigrateAccountDisplay()
+    local old = WDH_Saved.settings
+    if old.showQuality == nil and old.hud == nil then return end
+    local template = {}
+    for k in pairs(DEFAULT_DISPLAY) do template[k] = old[k] end
+    for key, switch in pairs(LEGACY_TYPE_SWITCH) do
+        if old[switch] == false then
+            template[key] = SHOW_OFF
+        else
+            template[key] = old.showQuality
+        end
+        old[switch] = nil
+    end
+    for k in pairs(DEFAULT_DISPLAY) do old[k] = nil end
+    old.showQuality = nil
+    WDH_Saved.template = CopyDisplay(template)
+end
+
 local function InitSaved()
     if type(WDH_Saved) ~= "table" then WDH_Saved = {} end
     WDH_Saved.version  = SAVED_VERSION
     WDH_Saved.settings = WDH_Saved.settings or {}
-    for k, v in pairs(DEFAULT_SETTINGS) do
-        if WDH_Saved.settings[k] == nil then WDH_Saved.settings[k] = v end
+    MigrateAccountDisplay()
+    FillDefaults(WDH_Saved.settings, DEFAULT_ACCOUNT)
+
+    -- Anzeige-Einstellungen je Charakter (ID bleibt bei Umbenennung gleich)
+    WDH_Saved.chars = WDH_Saved.chars or {}
+    local charId = GetCurrentCharacterId()
+    local char = WDH_Saved.chars[charId]
+    if not char then
+        char = { settings = CopyDisplay(WDH_Saved.template or DEFAULT_DISPLAY) }
+        WDH_Saved.chars[charId] = char
     end
+    char.name = zo_strformat("<<1>>", GetUnitName("player"))
+    FillDefaults(char.settings, DEFAULT_DISPLAY)
+    WDH.charId = charId
+
     WDH_Saved.zones = WDH_Saved.zones or {}
     if WDH_Saved.last then
         WDH_Last.zoneId = WDH_Saved.last.zoneId
