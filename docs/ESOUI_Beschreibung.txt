@@ -61,10 +61,13 @@ Besonders gesucht: Berichte aus Verliesen, Prüfungen, von Weltbossen, Taschendi
 [list=1]
 [*]Debug-Ausgabe einschalten: [b]/wdh_debug[/b] oder im Menü unter „Entwicklung"
 [*]Wie gewohnt plündern – im Chat steht zu jeder Plünderung Quelle, Zone, Art und jedes Item mit Kategorie
-[*]Fällt etwas auf (falsche Quelle, falsche Kategorie, fehlende Beute, Lua-Fehler): die Chatzeilen mit kurzer Beschreibung hier in die Kommentare
+[*]Fällt etwas auf (falsche Quelle, falsche Kategorie, fehlende Beute, Lua-Fehler): die Chatzeilen mit kurzer Beschreibung hier in die Kommentare oder als [url=https://github.com/cudddel-spec/WhatDropsHere/issues]Issue auf GitHub[/url]
 [/list]
 
 [size=4][b]Abhängigkeiten[/b][/size]
 [list]
 [*]Optional: [url=https://www.esoui.com/downloads/info7-LibAddonMenu.html]LibAddonMenu-2.0[/url] für das Einstellungsmenü
 [/list]
+
+[size=4][b]Quellcode[/b][/size]
+[url=https://github.com/cudddel-spec/WhatDropsHere]github.com/cudddel-spec/WhatDropsHere[/url] – MIT-Lizenz
