@@ -244,7 +244,7 @@ standardmäßig aus (bestehende Einstellungen bleiben). Nur deutsche Texte.
       (`min`/`max` werden seit Phase 1 je Kategorie und Item gespeichert). Entspricht Phase 3.
 - [ ] **Heatmap** für bestimmte Rohstoffe/Set-Items zum Farmen. Braucht Positionen (Phase 4) zumindest grob,
       z. B. pro Karte in Raster-Zellen statt exakter Koordinaten.
-- [ ] Englische Texte (`lang/en.lua`, Manifest mit `$(language)`).
+- [x] Englische Texte (`lang/en.lua` als Standard, `lang/de.lua` überschreibt; Manifest mit `$(language)`), seit 0.3.0-beta.
 
 **Ideen für später:**
 - Normal/Veteran in Verliesen und Prüfungen unterscheiden (`GetCurrentZoneDungeonDifficulty()`), gleiche Zonen-ID.

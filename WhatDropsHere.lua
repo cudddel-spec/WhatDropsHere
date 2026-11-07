@@ -46,7 +46,7 @@ local INTERACT_POLL_MS   = 100   -- Abfrage-Intervall fuer die Art der Interakti
 -- Addon-Objekt
 -- -----------------------------------------------------------------------------
 WhatDropsHere = {
-    VERSION = "0.2.0-beta",  -- wie "## Version" im Manifest
+    VERSION = "0.3.0-beta",  -- wie "## Version" im Manifest
 }
 local WDH = WhatDropsHere
 local CAT = WDH_Categories
@@ -838,7 +838,9 @@ local function RegisterSlashCommands()
     end
 
     SLASH_COMMANDS["/wdh_reset"] = function(args)
-        if zo_strtrim(args or "") ~= "ja" then
+        -- "yes" funktioniert in jeder Sprache, dazu das Wort der Client-Sprache ("ja")
+        local answer = zo_strlower(zo_strtrim(args or ""))
+        if answer ~= "yes" and answer ~= WDH_STRINGS.RESET_CONFIRM then
             d(WDH_STRINGS.RESET_USAGE)
             return
         end

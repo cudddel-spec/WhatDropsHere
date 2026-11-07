@@ -1,6 +1,6 @@
 [size=5][b]What Drops Here?[/b] [color=#FF8800](Beta)[/color][/size]
 
-[i]English: Remembers what every loot source (resource nodes, containers, corpses, critters, pickpocketing, theft) has dropped for you so far and shows it next to the crosshair. Beta, German texts only for now – English is planned.[/i]
+[i]English: Remembers what every loot source (resource nodes, containers, corpses, critters, pickpocketing, theft) has dropped for you so far and shows it next to the crosshair. English and German texts.[/i]
 
 Merkt sich, was dir jede Beutequelle bisher gegeben hat, und zeigt es neben dem Fadenkreuz an – bevor du plünderst.
 
@@ -42,7 +42,7 @@ Jeder Fund wird mit Item-ID und Kategorie gespeichert, pro Quelle und Zone, für
 [*][b]Gleichnamige Quellen[/b] einer Zone werden zusammengefasst – gewollt, so entsteht die Statistik.
 [*][b]Normal und Veteran[/b] werden in Verliesen und Prüfungen noch nicht unterschieden.
 [*]Gespeichert wird beim Ausloggen, bei /reloadui und beim normalen Beenden – nicht bei einem Absturz.
-[*][b]Nur deutsche Texte.[/b]
+[*]Quellen werden unter ihrem Namen in der Client-Sprache gespeichert; Daten verschiedener Client-Sprachen mischen sich nicht.
 [/list]
 
 [size=4][b]Getestet mit[/b][/size]
@@ -53,7 +53,7 @@ Much Smarter AutoLoot, Smarter AutoLoot. Erfasst wird, was eine Quelle [i]angebo
 [*]Datenbanken mehrerer Spieler zusammenführen (externes Werkzeug, ähnlich HarvestMapData)
 [*]Feinere Anzeige, z. B. Spanne Minimum–Maximum für Rohstoffe
 [*]Heatmap für Rohstoffe und Set-Gegenstände zum Farmen
-[*]Englische Texte
+[*]Weitere Sprachen – Übersetzungen willkommen
 [/list]
 
 [size=4][b]Beta-Rückmeldung[/b][/size]

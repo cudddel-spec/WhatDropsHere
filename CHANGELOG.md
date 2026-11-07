@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.3.0-beta (07.11.2026)
+
+- **Englische Texte.** Englisch ist jetzt Standard; im deutschen Client bleibt alles deutsch.
+  Andere Client-Sprachen (Französisch, Japanisch …) zeigen Englisch.
+- `/wdh_reset yes` löscht die Daten in jeder Sprache (im deutschen Client weiterhin auch `/wdh_reset ja`).
+
 ## 0.2.0-beta (06.11.2026)
 
 Erste öffentliche Beta.

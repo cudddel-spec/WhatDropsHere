@@ -1,6 +1,6 @@
 # What Drops Here? (Beta)
 
-> **Beta-Version 0.2.0.** Die Grundfunktionen sind getestet, aber vieles lässt sich allein nicht in absehbarer Zeit prüfen:
+> **Beta-Version 0.3.0.** Die Grundfunktionen sind getestet, aber vieles lässt sich allein nicht in absehbarer Zeit prüfen:
 > Verliese und Prüfungen, Weltbosse, Taschendiebstahl, Diebstahl, Spuren, andere Auto-Loot-Addons, Gamepad-Modus.
 > Rückmeldungen sind sehr willkommen, siehe [Beta-Rückmeldung](#beta-rückmeldung).
 
@@ -61,7 +61,7 @@ erscheint bei einem fremden Behälter die Diebstahl-Statistik.
 | `/wdh_show 0-5` | Anzeige-Schwelle (Qualität) |
 | `/wdh_names 0-5` | am Fadenkreuz mit Namen ab Qualität, darunter als Kategorie |
 | `/wdh_debug` | Debug-Ausgabe im Chat an/aus |
-| `/wdh_reset ja` | alle Daten löschen |
+| `/wdh_reset ja` | alle Daten löschen (`yes` geht in jeder Sprache) |
 
 ## Bekannte Einschränkungen
 
@@ -87,10 +87,11 @@ Bei lebenden Zielen am Fadenkreuz werden nur die eindeutigen Zuordnungen gezeigt
   gehen die Plünderungen seit dem letzten Speichern verloren. Das betrifft alle Addons.
 - **Taschendiebstahl:** Der Name des Opfers kommt von der letzten Interaktion bzw. dem Ziel unter dem Fadenkreuz.
 
-### Nur Deutsch
+### Sprachen
 
-Alle Texte des Addons sind bisher deutsch, auch im englischen oder französischen Spielclient.
+Die Texte gibt es auf Deutsch und Englisch; andere Client-Sprachen zeigen Englisch.
 Die Erfassung funktioniert in jeder Sprache, Quellen werden aber unter ihrem Namen in der Client-Sprache gespeichert.
+Daten aus verschiedenen Client-Sprachen mischen sich deshalb nicht.
 
 ## Geplant
 
@@ -98,7 +99,7 @@ Die Erfassung funktioniert in jeder Sprache, Quellen werden aber unter ihrem Nam
   mehrerer Spieler zusammenführt. Eigene und gemeinsame Daten sollen getrennt sichtbar bleiben.
 - **Feinere Anzeige:** z. B. für Rohstoffe die Spanne pro Plünderung (Minimum–Maximum) statt nur der Gesamtmenge.
 - **Heatmap:** Karte, wo bestimmte Rohstoffe oder Set-Gegenstände besonders häufig droppen, zum gezielten Farmen.
-- **Weitere Sprachen**, zuerst Englisch.
+- **Weitere Sprachen:** Übersetzungen (z. B. Französisch) sind willkommen, eine Vorlage ist `lang/en.lua`.
 
 ## Beta-Rückmeldung
 

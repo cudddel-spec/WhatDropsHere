@@ -8,7 +8,7 @@ ESO has no fixed loot tables like other games: almost every source can drop almo
 
 [i]Example: after looting a few Alit, you can see at a glance that leather drops in about 80 % of them – handy when you plan where to farm materials.[/i]
 
-[color=#FFAA00][b]Note:[/b] The in-game texts are German for now. An English translation is the next planned step. Tracking works with every game client language.[/color]
+[color=#FFAA00][b]Languages:[/b] English and German. Other client languages show English texts; tracking works with every client language.[/color]
 
 [size=4][b]What is tracked[/b][/size]
 [list]
@@ -36,7 +36,7 @@ Every find is stored with its item ID and category, per source and zone, account
 [*][b]/wdh[/b] – statistics of the last looted source, [b]/wdh <name>[/b] – search a source (current zone first, then all zones)
 [*][b]/wdh_zone[/b], [b]/wdh_zones[/b] – sources in the current zone, zones with data
 [*][b]/wdh_hud[/b], [b]/wdh_units[/b], [b]/wdh_show 0-5[/b], [b]/wdh_names 0-5[/b] – display options
-[*][b]/wdh_debug[/b] – debug output in chat, [b]/wdh_reset ja[/b] – delete all data
+[*][b]/wdh_debug[/b] – debug output in chat, [b]/wdh_reset yes[/b] – delete all data
 [/list]
 
 [size=4][b]Known limitations[/b][/size]
@@ -47,7 +47,6 @@ Every find is stored with its item ID and category, per source and zone, account
 [*][b]Sources are stored by name in your client language[/b], so data from different client languages does not mix.
 [*][b]Normal and veteran[/b] are not yet distinguished in dungeons and trials.
 [*]Data is saved on logout, /reloadui and a normal exit – not if the game crashes.
-[*][b]In-game texts are German only[/b] (for now).
 [/list]
 
 [size=4][b]Tested with[/b][/size]
@@ -55,16 +54,16 @@ Much Smarter AutoLoot and Smarter AutoLoot. The addon records what a source [i]o
 
 [size=4][b]Planned[/b][/size]
 [list]
-[*][b]English in-game texts[/b]
 [*]Merge databases of several players (external tool, similar to HarvestMapData)
 [*]Finer display, e.g. minimum–maximum per loot for resources
 [*]Heatmap for resources and set items to plan your farming routes
+[*]More languages – translations are welcome, [b]lang/en.lua[/b] is the template
 [/list]
 
 [size=4][b]Beta feedback[/b][/size]
 Reports from situations that are hard to test alone are especially welcome: dungeons, trials, world bosses, pickpocketing, theft, leads, gamepad mode and other auto-loot addons.
 [list=1]
-[*]Turn on the debug output: [b]/wdh_debug[/b] or in the settings under "Entwicklung" (development)
+[*]Turn on the debug output: [b]/wdh_debug[/b] or in the settings under "Development"
 [*]Loot as usual – the chat shows source, zone, source type and every item with its category for each loot
 [*]If something looks wrong (wrong source, wrong category, missing loot, Lua error), post the chat lines with a short description in the comments here or as an [url=https://github.com/cudddel-spec/WhatDropsHere/issues]issue on GitHub[/url]
 [/list]
