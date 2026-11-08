@@ -15,8 +15,10 @@ Eine vollständige Loot-Tabelle wie in anderen Spielen gibt es in ESO nicht: Fas
 [*][b]Leichen[/b] von Gegnern, Tieren und NPCs
 [*][b]Kleintiere[/b], die du mit „Nehmen" einsammelst
 [*][b]Taschendiebstahl[/b] und [b]Diebstahl[/b] aus fremden Behältern – getrennt gespeichert
+[*][b]Gestohlene Einzelstücke[/b] (Brot, Flaschen, Kelche … von Tischen und Regalen) – ein Sammeleintrag je Zone, „Einzelne Gegenstände [Diebstahl]"
 [*][b]Spuren[/b] (Antiquitäten)
 [/list]
+[b]Nicht erfasst:[/b] Waffen und Rüstungen, die in der offenen Welt herumliegen (z. B. ein Schild, den du mit „Nehmen" aufhebst). Sie sind keine Beutequelle, sondern nur der Gegenstand selbst, immer von geringer Qualität.
 Jeder Fund wird mit Item-ID und Kategorie gespeichert, pro Quelle und Zone, für alle Charaktere deines Accounts.
 
 [size=4][b]Anzeige am Fadenkreuz[/b][/size]

@@ -27,7 +27,8 @@
 --     zoneId 0      = Behaelter aus dem Inventar (ueberall gleich)
 --     key           = Name in Kleinbuchstaben, "#aoe" fuer Sammelpluenderung,
 --                     "pickpocket:" fuer Taschendiebstahl
---   Quelle = { name, kind, loots, gold, targetType, last, sets = {}, items = {}, cats = {} }
+--   Quelle = { name, kind, loots, gold, targetType, last, type, collective, sets = {}, items = {}, cats = {} }
+--     collective = Sammeleintrag (gestohlene Einzelstuecke der Zone, Schluessel LOOSE_THEFT_KEY)
 --     items[itemId] = Stat + cat (jeder Fund; "lead:<antiquityId>" bzw. "n:<Name>" fuer Nicht-Items)
 --     cats[key]     = Stat (Kategorie-Schluessel aus WDH_Categories.lua, alle Funde der Kategorie)
 --     sets[setId]   = Stat + slots[slot] = Anzahl (Set-Ausruestung zusaetzlich pro Set)
@@ -35,7 +36,9 @@
 --   Stat = { n = Anzahl gesamt, hits = Pluenderungen mit Treffer, min, max, q = { [Qualitaet] = Anzahl } }
 
 local ADDON_NAME         = "WhatDropsHere"
-local SAVED_VERSION      = 2  -- 2: jeder Fund mit Item-ID, Schwelle nur noch fuer die Anzeige
+local SAVED_VERSION      = 3  -- 2: jeder Fund mit Item-ID, Schwelle nur noch fuer die Anzeige
+                              -- 3: herumliegende Gegenstaende nicht mehr als eigene Quelle
+local LOOSE_THEFT_KEY    = "#loose#theft"  -- Sammeleintrag je Zone fuer gestohlene Einzelstuecke ohne Lootfenster
 local RECEIVED_GRACE_MS  = 2000  -- ms nach LOOT_CLOSED, in denen LOOT_RECEIVED noch zur Sitzung gehoert
 local SESSION_TIMEOUT_MS = 5000  -- ms ohne LOOT_UPDATED, nach denen eine Sitzung ohne LOOT_CLOSED gespeichert wird
 local INTERACT_VALID_MS  = 3000  -- ms nach der Interaktion, in denen Beute ohne Lootfenster ihr zugeordnet wird
@@ -46,7 +49,7 @@ local INTERACT_POLL_MS   = 100   -- Abfrage-Intervall fuer die Art der Interakti
 -- Addon-Objekt
 -- -----------------------------------------------------------------------------
 WhatDropsHere = {
-    VERSION = "0.3.0-beta",  -- wie "## Version" im Manifest
+    VERSION = "0.3.1-beta",  -- wie "## Version" im Manifest
 }
 local WDH = WhatDropsHere
 local CAT = WDH_Categories
@@ -203,10 +206,13 @@ local function SetName(setId)
 end
 
 -- Anzeigename fuer einen items-Schluessel (Item-ID, "lead:<id>" oder "n:<Name>")
+local function ItemLinkFromId(itemId)
+    return string.format("|H1:item:%d:30:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h", itemId)
+end
+
 local function ItemName(id)
     if type(id) == "number" then
-        local link = string.format("|H1:item:%d:30:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h", id)
-        return zo_strformat(SI_TOOLTIP_ITEM_NAME, GetItemLinkName(link))
+        return zo_strformat(SI_TOOLTIP_ITEM_NAME, GetItemLinkName(ItemLinkFromId(id)))
     end
     local leadId = id:match("^lead:(%d+)$")
     if leadId then
@@ -257,6 +263,12 @@ end
 -- -----------------------------------------------------------------------------
 -- Speicher
 -- -----------------------------------------------------------------------------
+
+-- Anzeigename einer Quelle; Sammeleintraege in der Sprache des Clients
+local function RecordName(rec)
+    if rec.collective then return WDH_STRINGS.RECORD_LOOSE end
+    return rec.name
+end
 
 local function GetRecord(zoneId, key, name, kind)
     local zones = WDH_Saved.zones
@@ -451,6 +463,7 @@ local function CommitSession(session)
     end
 
     local rec = GetRecord(session.zoneId, session.key, session.name, session.kind)
+    if session.collective then rec.collective = true end
     rec.loots      = rec.loots + 1
     rec.gold       = rec.gold + session.gold
     rec.targetType = session.targetType
@@ -467,8 +480,12 @@ local function CommitSession(session)
 
     WDH_Last.zoneId   = session.zoneId
     WDH_Last.key      = session.key
-    WDH_Last.closedAt = Now()
-    WDH_Last.itemIds  = session.itemIds
+    -- Nachlauffrist nur fuer Lootfenster: Beute ohne Fenster (mehrere Gegenstaende vom Tisch
+    -- stehlen, Taschendiebstahl) kommt nicht verspaetet an und darf die naechste nicht verschlucken
+    if session.fromWindow then
+        WDH_Last.closedAt = Now()
+        WDH_Last.itemIds  = session.itemIds
+    end
     -- Fuer /wdh ohne Argument auch nach Neustart merken
     WDH_Saved.last = { zoneId = session.zoneId, key = session.key }
 
@@ -590,11 +607,31 @@ local function OnLootClosed()
     FinishSession()
 end
 
+-- Herumliegender Gegenstand ("Nehmen" ohne Fenster): Waffe/Ruestung (Interaktion heisst z. B. "Schild",
+-- das Item "Nachtholzschild") oder ein Item mit dem Namen der Quelle. Kleintiere geben andere Beute.
+local function IsLooseItem(itemLink, sourceName)
+    local itemType = GetItemLinkItemType(itemLink)
+    if itemType == ITEMTYPE_WEAPON or itemType == ITEMTYPE_ARMOR then return true end
+    return MakeKey(zo_strformat(SI_TOOLTIP_ITEM_NAME, GetItemLinkName(itemLink))) == MakeKey(sourceName)
+end
+
 local function FinishDirectSession()
     EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_DirectCommit")
-    if not WDH_Direct then return end
-    CommitSession(WDH_Direct)
+    local session = WDH_Direct
+    if not session then return end
     WDH_Direct = nil
+    if session.kind == "theft" then
+        -- Gestohlene Einzelstuecke: ein Sammeleintrag je Zone statt einer Quelle je Gegenstand
+        session.key        = LOOSE_THEFT_KEY
+        session.name       = WDH_STRINGS.RECORD_LOOSE
+        session.collective = true
+    elseif session.loose then
+        -- Herumliegende Waffen/Ruestung in der offenen Welt: Trash, nicht speichern
+        dbg(string.format(WDH_STRINGS.DEBUG_LOOSE_IGNORED, session.name))
+        for _, line in ipairs(session.lines) do dbg(line) end
+        return
+    end
+    CommitSession(session)
 end
 
 -- Beute ohne Lootfenster der letzten Interaktion zuordnen.
@@ -611,6 +648,7 @@ local function AddDirectLoot(itemLink, quantity)
         WDH_Direct = NewSession(WDH_Interact.name, nil, "take", WDH_Interact.owned)
         WDH_Direct.interactAt = WDH_Interact.at
     end
+    WDH_Direct.loose = WDH_Direct.loose ~= false and IsLooseItem(itemLink, WDH_Direct.name)
     AddItem(WDH_Direct, itemLink, quantity)
 
     EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_DirectCommit")
@@ -784,7 +822,7 @@ function WDH.CopySettingsFrom(charId)
 end
 
 function WDH:PrintRecord(zoneId, rec)
-    local header = string.format(WDH_STRINGS.RECORD_HEADER, rec.name, ZoneName(zoneId), rec.loots, rec.gold)
+    local header = string.format(WDH_STRINGS.RECORD_HEADER, RecordName(rec), ZoneName(zoneId), rec.loots, rec.gold)
     if rec.kind == "aoe" then header = header .. WDH_STRINGS.RECORD_AOE end
     if rec.kind == "pickpocket" then header = header .. WDH_STRINGS.RECORD_PICKPOCKET end
     if rec.kind == "theft" then header = header .. WDH_STRINGS.RECORD_THEFT end
@@ -830,7 +868,7 @@ end
 local function SearchZones(needle, zoneIds, found)
     for _, zoneId in ipairs(zoneIds) do
         for key, rec in pairs(WDH_Saved.zones[zoneId] or {}) do
-            if zo_plainstrfind(key, needle) then
+            if zo_plainstrfind(key, needle) or (rec.collective and zo_plainstrfind(MakeKey(RecordName(rec)), needle)) then
                 found[#found + 1] = { zoneId = zoneId, rec = rec }
             end
         end
@@ -917,7 +955,7 @@ local function RegisterSlashCommands()
             return
         end
         for _, rec in pairs(zone) do
-            local name = rec.name
+            local name = RecordName(rec)
             if rec.kind == "aoe" then name = name .. WDH_STRINGS.RECORD_AOE end
             if rec.kind == "pickpocket" then name = name .. WDH_STRINGS.RECORD_PICKPOCKET end
             if rec.kind == "theft" then name = name .. WDH_STRINGS.RECORD_THEFT end
@@ -1006,8 +1044,70 @@ local function MigrateAccountDisplay()
     WDH_Saved.template = CopyDisplay(template)
 end
 
+-- Fuehrt eine gespeicherte Quelle in eine andere zusammen (Migration)
+local function MergeRecord(dst, src)
+    dst.loots = dst.loots + src.loots
+    dst.gold  = dst.gold + src.gold
+    dst.last  = math.max(dst.last or 0, src.last or 0)
+    for _, field in ipairs({ "sets", "items", "cats" }) do
+        for id, s in pairs(src[field]) do
+            local d = dst[field][id]
+            if not d then
+                dst[field][id] = s
+            else
+                d.n    = d.n + s.n
+                d.hits = d.hits + s.hits
+                d.cat  = d.cat or s.cat
+                d.min  = (d.min and s.min) and math.min(d.min, s.min) or d.min or s.min
+                d.max  = math.max(d.max or 0, s.max or 0)
+                for quality, count in pairs(s.q) do d.q[quality] = (d.q[quality] or 0) + count end
+                for slot, count in pairs(s.slots or {}) do
+                    d.slots = d.slots or {}
+                    d.slots[slot] = (d.slots[slot] or 0) + count
+                end
+            end
+        end
+    end
+end
+
+-- Quelle aus "Nehmen" ohne Fenster, die nur herumliegende Gegenstaende enthaelt (siehe IsLooseItem)
+local function IsLooseRecord(rec)
+    if next(rec.items) == nil then return false end
+    for id in pairs(rec.items) do
+        if type(id) ~= "number" or not IsLooseItem(ItemLinkFromId(id), rec.name) then return false end
+    end
+    return true
+end
+
+-- Bis 0.3.0 wurde jeder herumliegende Gegenstand eine eigene Quelle.
+-- Ohne Lootfenster: targetType fehlt. Gestohlene -> Sammeleintrag der Zone, sonst loeschen.
+local function MigrateLooseItems()
+    for zoneId, zone in pairs(WDH_Saved.zones) do
+        local stolen = {}
+        for key, rec in pairs(zone) do
+            if rec.targetType == nil and not rec.collective then
+                if rec.kind == "theft" then
+                    stolen[#stolen + 1] = key
+                elseif rec.kind == "take" and IsLooseRecord(rec) then
+                    zone[key] = nil
+                end
+            end
+        end
+        for _, key in ipairs(stolen) do
+            local rec = zone[key]
+            zone[key] = nil
+            local dst = GetRecord(zoneId, LOOSE_THEFT_KEY, WDH_STRINGS.RECORD_LOOSE, "theft")
+            dst.collective = true
+            dst.type       = "theft"
+            MergeRecord(dst, rec)
+        end
+    end
+end
+
 local function InitSaved()
     if type(WDH_Saved) ~= "table" then WDH_Saved = {} end
+    WDH_Saved.zones = WDH_Saved.zones or {}
+    if (WDH_Saved.version or SAVED_VERSION) < 3 then MigrateLooseItems() end
     WDH_Saved.version  = SAVED_VERSION
     WDH_Saved.settings = WDH_Saved.settings or {}
     MigrateAccountDisplay()

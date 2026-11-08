@@ -19,8 +19,10 @@ ESO has no fixed loot tables like other games: almost every source can drop almo
 [*][b]Corpses[/b] of enemies, animals and NPCs
 [*][b]Critters[/b] you pick up with "Take" (insects, jellyfish, moths …)
 [*][b]Pickpocketing[/b] and [b]theft[/b] from owned containers – stored separately
+[*][b]Stolen loose items[/b] (bread, bottles, goblets … from tables and shelves) – one collective entry per zone, "Loose items [theft]"
 [*][b]Leads[/b] (Antiquities)
 [/list]
+[b]Not tracked:[/b] weapons and armor lying around in the open world (e.g. a shield you pick up with "Take"). They are not a loot source but simply the item itself, always of low quality.
 Every find is stored with its item ID and category, per source and zone, account-wide for all your characters.
 
 [size=4][b]Crosshair display[/b][/size]

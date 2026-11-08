@@ -1,5 +1,15 @@
 # Änderungen
 
+## 0.3.1-beta (08.11.2026)
+
+- **Herumliegende Gegenstände sind keine eigenen Quellen mehr.** Waffen und Rüstungen, die in der offenen Welt
+  herumliegen („Nehmen – Schild" ergibt „Nachtholzschild"), werden nicht mehr gespeichert. Gestohlene Einzelstücke
+  ohne Lootfenster (Brot, Flaschen … vom Tisch) landen in einem Sammeleintrag je Zone, „Einzelne Gegenstände [Diebstahl]".
+  Ändert Quellen-Schlüssel: vorhandene Daten werden beim ersten Einloggen automatisch umgestellt (Datenversion 3),
+  kein Zurücksetzen nötig.
+- Mehrere Gegenstände innerhalb von zwei Sekunden ohne Lootfenster nehmen oder stehlen: Ab dem zweiten wurde die Beute
+  als „kurz nach Lootfenster" verworfen. Die Nachlauffrist gilt jetzt nur noch nach echten Lootfenstern.
+
 ## 0.3.0-beta (07.11.2026)
 
 - **Anzeige-Einstellungen je Charakter.** Jeder Charakter hat seine eigene Anzeige; im Menü lassen sich

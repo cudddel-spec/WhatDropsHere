@@ -69,6 +69,14 @@ ohne Kampf und ohne Lootfenster. Sie liefern Köder und Handwerkswaren (z. B. Sc
 - `EVENT_LOOT_RECEIVED` innerhalb von 3 Sek. danach, ohne offenes Lootfenster → gehört zu diesem Ziel.
 - Alle Items einer Interaktion bilden eine Sitzung; gespeichert wird 1 Sek. nach dem letzten Item.
 - Taschendiebstahl nutzt dieselbe gemerkte Interaktion als Opfernamen (vorher: Ziel unter dem Fadenkreuz).
+- **Herumliegende Gegenstände** (seit 0.3.1, Test 08.11.2026: „Nehmen – Schild" ergab „Nachtholzschild", Trash,
+  Verwerten bringt kein Material): keine eigene Quelle. Erkennung: Sitzung ohne Fenster, deren Items alle Waffe/Rüstung
+  sind oder so heißen wie die Quelle (`IsLooseItem`). Der Name der Interaktion ist nicht der Itemname, daher reicht
+  ein Namensvergleich nicht. Frei herumliegend → nicht gespeichert (Debug „nicht gespeichert").
+  Gestohlen (jede Sitzung ohne Fenster mit `isOwned`) → Sammeleintrag `#loose#theft` je Zone, „Einzelne Gegenstände".
+  Datenversion 3 stellt Altdaten um (Einträge ohne `targetType`).
+- Nachlauffrist (2 Sek., „kurz nach Lootfenster") gilt nur nach echten Lootfenstern; vorher verschluckte sie den
+  zweiten von mehreren schnell genommenen Gegenständen.
 
 ### Erneut geöffnete Quellen (Reste im Lootfenster)
 
@@ -293,6 +301,9 @@ Offene Entscheidungen (vor 1.0):
 - [ ] **Sprachabhängige Schlüssel:** Quellen über den Namen in der Client-Sprache. Für das Zusammenführen mehrerer
       Spieler (Merge-Tool) ein Problem. Gibt es eine sprachunabhängige Kennung? Sonst bewusst so lassen und dokumentieren.
 - [ ] **Sammelplünderung (`#aoe`):** bisher im Spiel nie beobachtet. Schlüssel beibehalten oder streichen?
+- [x] **Herumliegende Gegenstände** (08.11.2026): frei → nicht speichern, gestohlen → Sammeleintrag je Zone.
+      Umgesetzt in 0.3.1 mit Migration (Datenversion 3). Offen: Gibt es freie Einzelstücke, die keine Waffe/Rüstung
+      sind und anders heißen als die Quelle (z. B. Tränke in Verliesen)? Die blieben eigene Quellen.
 
 
 

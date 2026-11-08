@@ -1,6 +1,6 @@
 # What Drops Here? (Beta)
 
-> **Beta-Version 0.3.0.** Die Grundfunktionen sind getestet, aber vieles lässt sich allein nicht in absehbarer Zeit prüfen:
+> **Beta-Version 0.3.1.** Die Grundfunktionen sind getestet, aber vieles lässt sich allein nicht in absehbarer Zeit prüfen:
 > Verliese und Prüfungen, Weltbosse, Taschendiebstahl, Diebstahl, Spuren, andere Auto-Loot-Addons, Gamepad-Modus.
 > Rückmeldungen sind sehr willkommen, siehe [Beta-Rückmeldung](#beta-rückmeldung).
 >
@@ -25,7 +25,12 @@ und vieles hängt von Zone und Level ab. What Drops Here? sammelt deshalb **dein
 - **Leichen** von Gegnern und Tieren
 - **Kleintiere**, die du mit „Nehmen" einsammelst (Insekten, Quallen, Motten …)
 - **Taschendiebstahl**
+- **Gestohlene Einzelstücke** ohne Lootfenster (Brot, Flaschen … vom Tisch): ein Sammeleintrag je Zone,
+  „Einzelne Gegenstände [Diebstahl]" (`/wdh_zone`, `/wdh einzelne`)
 - **Spuren** (Antiquitäten)
+
+**Nicht erfasst:** Waffen und Rüstungen, die in der offenen Welt herumliegen (z. B. „Nehmen – Schild").
+Sie sind keine Beutequelle, sondern nur der Gegenstand selbst, immer von geringer Qualität.
 
 Jeder Fund wird vollständig gespeichert: mit seiner Item-ID und seiner Kategorie (z. B. „Schmiedematerial").
 Ob ein Item am Fadenkreuz mit Namen oder zusammengefasst in seiner Kategorie erscheint, entscheidet erst die Anzeige.
@@ -53,7 +58,8 @@ lassen sich die eines anderen übernehmen. Die gesammelten Daten gelten weiterhi
 **Mit Namen anzeigen ab Qualität:** darunter erscheinen Items zusammengefasst in ihrer Kategorie, darüber einzeln
 mit Namen. Weil immer alles mit Item-ID gespeichert wird, wirkt die Einstellung sofort auch auf alle bisherigen Funde.
 
-**Diebstahl** aus fremden Behältern, Tresoren und von fremden Gegenständen wird getrennt gespeichert.
+**Diebstahl** aus fremden Behältern und Tresoren wird getrennt gespeichert, einzelne gestohlene Gegenstände
+im Sammeleintrag der Zone.
 Eine gestohlene „Kiste" verfälscht also nicht die Statistik freier Kisten, und am Fadenkreuz
 erscheint bei einem fremden Behälter die Diebstahl-Statistik.
 

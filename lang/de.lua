@@ -37,6 +37,8 @@ Override(WDH_STRINGS, {
     RECORD_AOE          = " |cFFAA00[Sammelplünderung]|r",
     RECORD_PICKPOCKET   = " |cFFAA00[Taschendiebstahl]|r",
     RECORD_THEFT        = " |cFF6666[Diebstahl]|r",
+    RECORD_LOOSE        = "Einzelne Gegenstände",
+    DEBUG_LOOSE_IGNORED = "|cFFAA00Herumliegender Gegenstand (%s), nicht gespeichert:|r",
     -- %s = Name, %d = Anzahl, %d = Treffer, %d = Plünderungen, %s = Qualitäten
     RECORD_LINE         = "  %s: %d gesamt, in %d von %d (%s)",
     RECORD_ITEM         = "      %s: %d gesamt, in %d von %d (%s)",

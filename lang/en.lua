@@ -34,6 +34,8 @@ WDH_STRINGS = {
     RECORD_AOE          = " |cFFAA00[group loot]|r",
     RECORD_PICKPOCKET   = " |cFFAA00[pickpocketing]|r",
     RECORD_THEFT        = " |cFF6666[theft]|r",
+    RECORD_LOOSE        = "Loose items",
+    DEBUG_LOOSE_IGNORED = "|cFFAA00Item lying around (%s), not recorded:|r",
     -- %s = name, %d = count, %d = hits, %d = loots, %s = qualities
     RECORD_LINE         = "  %s: %d total, in %d of %d (%s)",
     RECORD_ITEM         = "      %s: %d total, in %d of %d (%s)",
