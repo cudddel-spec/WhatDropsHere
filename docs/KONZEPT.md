@@ -268,7 +268,33 @@ Account-weit bleiben nur Daten und `settings.debug`. Kopieren im Menü, Liste ü
 - Statistiken teilen: Datei tauschen + Skript zum Zusammenführen als „Gemeinschaftsdaten" (getrennt von eigenen Daten).
   Hürde: Quellen sind über den Namen gespeichert, also sprachabhängig. Server wie bei HarvestMapData nur bei vielen Nutzern.
 
-## Offene Fragen (im Spiel prüfen)
+## Vor Version 1.0: Datenmodell festlegen
+
+**Grundsatz:** Nach der Beta darf sich die Bedeutung gespeicherter Daten nicht mehr ändern. Was danach kommt,
+muss **additiv** sein (neue Felder, neue Auswertungen). Alles, was bestimmt, *welcher Quelle* eine Plünderung
+zugeordnet wird, muss deshalb in der Beta entschieden werden. Bis dahin steht in Beschreibung und README,
+dass ein Update das Löschen aller Daten empfehlen kann. Jede solche Änderung steht deutlich im CHANGELOG.
+
+Was sich nachträglich korrigieren lässt und was nicht:
+- **Korrigierbar (Migration über `SAVED_VERSION`):** Kategorie eines Items. Jedes Item ist mit Item-ID gespeichert,
+  `CAT.Classify` lässt sich aus der ID neu berechnen (Kategorie, Set, Platz). Auch Anzeige-Regeln sind frei änderbar.
+- **Nicht korrigierbar:** alles, was beim Plündern nicht gespeichert wurde. Zuordnung zur Quelle (Schlüssel = Name),
+  Art der Quelle (`rec.type`), Zone, Schwierigkeit, Position. Gemischte Einträge lassen sich nicht mehr trennen.
+  Ein späteres Auftrennen geht nur mit Genauigkeitsverlust (alte Daten bleiben gemischt oder werden verworfen).
+
+Offene Entscheidungen (vor 1.0):
+- [ ] **Kleintiere mit „Einfangen"** (Fleischfliegen): öffnen ein Lootfenster und gelten als Monster → `enemy`.
+      Sollen `other` sein. Erkennung prüfen (Aktion, Unit-Typ, Lootfenster-Ziel).
+- [ ] **Truhen am Dunklen Anker / Weltereignissen** vs. gewöhnliche Truhen: gleicher Name „Truhe", gleicher Schlüssel.
+      Eigener Schlüssel nötig (z. B. Truhe kurz nach Ankerende oder Ziel ohne Namen im Lootfenster).
+- [ ] **Normal / Veteran** in Verliesen und Prüfungen: gleiche Zonen-ID. `GetCurrentZoneDungeonDifficulty()` mitspeichern?
+- [ ] **Position für die Heatmap:** muss ab dem ersten Tag mitgespeichert werden, sonst gibt es nur Daten ab Einführung
+      (kein Fehler, aber keine Historie). Grobes Raster pro Karte reicht, Größe der SavedVariables beachten.
+- [ ] **Sprachabhängige Schlüssel:** Quellen über den Namen in der Client-Sprache. Für das Zusammenführen mehrerer
+      Spieler (Merge-Tool) ein Problem. Gibt es eine sprachunabhängige Kennung? Sonst bewusst so lassen und dokumentieren.
+- [ ] **Sammelplünderung (`#aoe`):** bisher im Spiel nie beobachtet. Schlüssel beibehalten oder streichen?
+
+
 
 - [x] Ist die Lootliste vollständig lesbar, wenn MSAL bzw. Smarter AutoLoot im selben Event schon `LootItemById()` aufgerufen hat?
   Meist ja (LootItemById ist eine Anfrage an den Server). **Aber:** MSAL meldet seinen LOOT_UPDATED-Handler bei

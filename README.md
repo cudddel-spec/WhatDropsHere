@@ -3,6 +3,11 @@
 > **Beta-Version 0.3.0.** Die Grundfunktionen sind getestet, aber vieles lässt sich allein nicht in absehbarer Zeit prüfen:
 > Verliese und Prüfungen, Weltbosse, Taschendiebstahl, Diebstahl, Spuren, andere Auto-Loot-Addons, Gamepad-Modus.
 > Rückmeldungen sind sehr willkommen, siehe [Beta-Rückmeldung](#beta-rückmeldung).
+>
+> **Daten können während der Beta ungültig werden.** Wie Quellen und Beute eingeordnet werden, kann sich noch ändern
+> (z. B. eingefangene Kleintiere als Feinde, Truhen am Dunklen Anker zusammen mit gewöhnlichen Truhen).
+> Gesammelte Daten lassen sich nicht immer nachträglich korrigieren; ein Update kann dann empfehlen, alle Daten
+> mit `/wdh_reset ja` zu löschen. Das steht dann deutlich im CHANGELOG. Ab Version 1.0 bleibt die Datenbank stabil.
 
 Merkt sich, was dir jede Beutequelle bisher gegeben hat, und zeigt es dir neben dem Fadenkreuz,
 bevor du plünderst.

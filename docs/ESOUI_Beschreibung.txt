@@ -2,6 +2,8 @@
 
 [i]English: Remembers what every loot source (resource nodes, containers, corpses, critters, pickpocketing, theft) has dropped for you so far and shows it next to the crosshair. English and German texts.[/i]
 
+[color=#FF6666][b]Beta – Daten müssen eventuell gelöscht werden:[/b] Solange What Drops Here? in der Beta ist, kann sich noch ändern, wie Quellen und Beute eingeordnet werden – zum Beispiel werden eingefangene Kleintiere derzeit als Feinde erfasst, und die Truhen am Dunklen Anker landen bei den gewöhnlichen Truhen der Zone. Bereits gesammelte Daten lassen sich nicht immer nachträglich korrigieren. Ein Update kann dann empfehlen, alle Daten zu löschen ([b]/wdh_reset ja[/b]), um saubere Statistiken zu bekommen. Das steht dann immer deutlich in den Änderungen. Ab Version 1.0 bleibt die Datenbank stabil.[/color]
+
 Merkt sich, was dir jede Beutequelle bisher gegeben hat, und zeigt es neben dem Fadenkreuz an – bevor du plünderst.
 
 Eine vollständige Loot-Tabelle wie in anderen Spielen gibt es in ESO nicht: Fast jede Quelle kann fast alles droppen, und vieles hängt von Zone und Level ab. What Drops Here? sammelt deshalb [b]deine eigene Statistik[/b], Quelle für Quelle.

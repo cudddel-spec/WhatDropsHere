@@ -8,6 +8,8 @@ ESO has no fixed loot tables like other games: almost every source can drop almo
 
 [i]Example: after looting a few Alit, you can see at a glance that leather drops in about 80 % of them – handy when you plan where to farm materials.[/i]
 
+[color=#FF6666][b]Beta – your data may need a reset:[/b] While What Drops Here? is in beta, the way sources and loot are sorted can still change – for example critters you catch are currently recorded as enemies, and Dark Anchor reward chests end up together with ordinary overland chests. Data you have already collected cannot always be corrected afterwards. An update may then ask you to delete all collected data ([b]/wdh_reset yes[/b]) to get clean statistics. The changelog will always say so clearly. With version 1.0 the database becomes stable.[/color]
+
 [color=#FFAA00][b]Languages:[/b] English and German. Other client languages show English texts; tracking works with every client language.[/color]
 
 [size=4][b]What is tracked[/b][/size]
