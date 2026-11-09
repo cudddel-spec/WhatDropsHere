@@ -145,6 +145,19 @@ Optional: [LibAddonMenu-2.0](https://www.esoui.com/downloads/info7-LibAddonMenu.
 - `python tools/build_release.py` baut `dist/WhatDropsHere-<Version>.zip` mit nur den Dateien, die Spieler brauchen.
 - `docs/` enthält das Konzept mit Testprotokollen und offenen Fragen sowie die ESOUI-Beschreibungen (Deutsch und Englisch) und die Änderungsliste für ESOUI.
 - Fehler und Ideen gern als [Issue](https://github.com/cudddel-spec/WhatDropsHere/issues).
+- **KI:** Der Code wurde nach Vorgaben des Autors mit einem KI-Assistenten (Claude von Anthropic) geschrieben und im Spiel getestet.
+- Einzige globale Variable ist `WhatDropsHere` (dazu die SavedVariables `WDH_Saved`). Die Loot-Events sind immer angemeldet,
+  weil jede Plünderung gespeichert wird; `EVENT_MONEY_UPDATE` nur, solange ein von Auto-Loot geleertes Fenster auf Beute wartet.
+- `WDH_Saved` ist bewusst nicht nach Server getrennt: Beute ist auf EU, NA und PTS dieselbe, Charaktere sind über ihre
+  serverübergreifend eindeutige ID gespeichert.
+
+## Danke
+
+- **Votan's Fisherman** (votan): Idee, Informationen direkt am Fadenkreuz zu zeigen
+- **HarvestMap** (Shinni): Rohstoffvorkommen an der Art der Interaktion erkennen
+- **Much Smarter AutoLoot** (Lykeion): Gold des Lootfensters aus `LOOT_SHARED` lesen
+
+Aus diesen Addons wurde kein Code kopiert.
 
 ## Lizenz
 

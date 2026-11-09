@@ -1,6 +1,10 @@
 -- lang/de.lua
 -- Deutsche Texte (ueberschreiben die englischen aus lang/en.lua)
 
+local WDH_STRINGS    = WhatDropsHere.L
+local WDH_SLOT_NAMES = WhatDropsHere.SLOT_NAMES
+local WDH_CAT_NAMES  = WhatDropsHere.CAT_NAMES
+
 local function Override(target, source)
     for key, value in pairs(source) do target[key] = value end
 end

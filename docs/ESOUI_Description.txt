@@ -1,5 +1,7 @@
 [size=5][b]What Drops Here?[/b] [color=#FF8800](Beta)[/color][/size]
 
+[color=#FFAA00][b]AI disclosure:[/b] The code of this addon was written with an AI assistant (Claude by Anthropic) following my specifications. I test every feature in game before release.[/color]
+
 [b]Your own loot table for every source in Tamriel – right next to your crosshair.[/b]
 
 What Drops Here? remembers what every loot source has given you so far: resource nodes, chests and containers, corpses, critters, pickpocketing and theft. Aim at a source and you see its statistics before you loot it.
@@ -72,6 +74,14 @@ Reports from situations that are hard to test alone are especially welcome: dung
 [*]Loot as usual – the chat shows source, zone, source type and every item with its category for each loot
 [*]If something looks wrong (wrong source, wrong category, missing loot, Lua error), post the chat lines with a short description in the comments here or as an [url=https://github.com/cudddel-spec/WhatDropsHere/issues]issue on GitHub[/url]
 [/list]
+
+[size=4][b]Credits[/b][/size]
+[list]
+[*][b]Votan's Fisherman[/b] by votan – the idea of showing information right at the crosshair
+[*][b]HarvestMap[/b] by Shinni – recognizing resource nodes by the interaction type after pressing the interact key
+[*][b]Much Smarter AutoLoot[/b] by Lykeion – reading the gold of a loot window from LOOT_SHARED
+[/list]
+No code was copied from these addons.
 
 [size=4][b]Dependencies[/b][/size]
 [list]

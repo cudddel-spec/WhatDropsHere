@@ -2,6 +2,8 @@
 
 ## 0.3.1-beta (08.11.2026)
 
+- **ESOUI-Regeln:** Nur noch eine globale Variable (`WhatDropsHere`), `EVENT_MONEY_UPDATE` nur noch angemeldet,
+  solange ein von Auto-Loot geleertes Lootfenster auf Beute wartet. KI-Hinweis und Danksagungen in der Beschreibung.
 - **Herumliegende Gegenstände sind keine eigenen Quellen mehr.** Waffen und Rüstungen, die in der offenen Welt
   herumliegen („Nehmen – Schild" ergibt „Nachtholzschild"), werden nicht mehr gespeichert. Gestohlene Einzelstücke
   ohne Lootfenster (Brot, Flaschen … vom Tisch) landen in einem Sammeleintrag je Zone, „Einzelne Gegenstände [Diebstahl]".

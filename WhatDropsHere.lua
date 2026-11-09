@@ -48,11 +48,11 @@ local INTERACT_POLL_MS   = 100   -- Abfrage-Intervall fuer die Art der Interakti
 -- -----------------------------------------------------------------------------
 -- Addon-Objekt
 -- -----------------------------------------------------------------------------
-WhatDropsHere = {
-    VERSION = "0.3.1-beta",  -- wie "## Version" im Manifest
-}
+-- WhatDropsHere ist die einzige globale Variable des Addons (angelegt in lang/en.lua)
 local WDH = WhatDropsHere
-local CAT = WDH_Categories
+WDH.VERSION = "0.3.1-beta"  -- wie "## Version" im Manifest
+local CAT = WDH.Categories
+local WDH_STRINGS, WDH_SLOT_NAMES, WDH_CAT_NAMES = WDH.L, WDH.SLOT_NAMES, WDH.CAT_NAMES
 
 -- Schwelle je Art der Quelle: Anzeige fuer diese Art aus
 local SHOW_OFF = -1
@@ -196,7 +196,7 @@ local function ColorByQuality(quality, text)
 end
 
 local function CatName(key)
-    return (WDH_CAT_NAMES and WDH_CAT_NAMES[key]) or key
+    return WDH_CAT_NAMES[key] or key
 end
 
 local function SetName(setId)
@@ -513,6 +513,29 @@ end
 -- Event-Handler
 -- -----------------------------------------------------------------------------
 
+-- Sitzung, die Beute aus LOOT_RECEIVED/CURRENCY_UPDATE uebernimmt (nur bei leer vorgefundenem Fenster)
+local function LateTarget()
+    if WDH_Session then
+        return WDH_Session.emptyWindow and WDH_Session or nil
+    end
+    return WDH_Pending
+end
+
+-- Gold-Aenderungen werden nur gebraucht, solange es eine solche Sitzung gibt:
+-- EVENT_MONEY_UPDATE ist nur dann angemeldet (sonst liefe es bei jedem Kauf, Verkauf, Reparieren ...)
+local OnMoneyUpdate  -- unten definiert
+local moneyWatched = false
+local function UpdateMoneyWatch()
+    local needed = LateTarget() ~= nil
+    if needed == moneyWatched then return end
+    moneyWatched = needed
+    if needed then
+        EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_Money", EVENT_MONEY_UPDATE, OnMoneyUpdate)
+    else
+        EVENT_MANAGER:UnregisterForEvent(ADDON_NAME .. "_Money", EVENT_MONEY_UPDATE)
+    end
+end
+
 -- Laufende Sitzung speichern (LOOT_CLOSED, Zeitueberschreitung, Ladebildschirm)
 local function FinishPending()
     EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_Pending")
@@ -520,6 +543,7 @@ local function FinishPending()
     local session = WDH_Pending
     WDH_Pending = nil
     CommitSession(session)
+    UpdateMoneyWatch()
 end
 
 local function FinishSession()
@@ -535,14 +559,7 @@ local function FinishSession()
     else
         CommitSession(session)
     end
-end
-
--- Sitzung, die Beute aus LOOT_RECEIVED/CURRENCY_UPDATE uebernimmt (nur bei leer vorgefundenem Fenster)
-local function LateTarget()
-    if WDH_Session then
-        return WDH_Session.emptyWindow and WDH_Session or nil
-    end
-    return WDH_Pending
+    UpdateMoneyWatch()
 end
 
 -- Im Test kam LOOT_CLOSED nicht immer (vermutlich wenn ein Auto-Loot-Addon das Fenster schliesst).
@@ -600,6 +617,7 @@ local function OnLootUpdated()
     if WDH_Session.emptyWindow and (next(WDH_Session.seen) or WDH_Session.gold > 0) then
         WDH_Session.emptyWindow = false
     end
+    UpdateMoneyWatch()
     ArmSessionTimeout()
 end
 
@@ -683,7 +701,7 @@ local function OnInteractionStart()
 end
 
 -- Gold, das ein Auto-Loot-Addon aus einem leer vorgefundenen Fenster genommen hat
-local function OnMoneyUpdate(_, newMoney, oldMoney, reason)
+function OnMoneyUpdate(_, newMoney, oldMoney, reason)
     if reason ~= CURRENCY_CHANGE_REASON_LOOT and reason ~= CURRENCY_CHANGE_REASON_LOOT_STOLEN then return end
     local late = LateTarget()
     if late and newMoney > oldMoney then
@@ -1136,8 +1154,8 @@ local function RegisterLootTracking()
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_LootUpdated",  EVENT_LOOT_UPDATED,  OnLootUpdated)
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_LootClosed",   EVENT_LOOT_CLOSED,   OnLootClosed)
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_LootReceived", EVENT_LOOT_RECEIVED, OnLootReceived)
+    -- EVENT_MONEY_UPDATE nur bei Bedarf, siehe UpdateMoneyWatch
     -- Vor Ladebildschirm, /reloadui und Logout offene Sitzungen sichern
-    EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_Money",        EVENT_MONEY_UPDATE,  OnMoneyUpdate)
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_Deactivated",  EVENT_PLAYER_DEACTIVATED, function()
         FinishSession()
         FinishPending()

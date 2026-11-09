@@ -1,5 +1,7 @@
 [size=5][b]What Drops Here?[/b] [color=#FF8800](Beta)[/color][/size]
 
+[color=#FFAA00][b]Hinweis zu KI:[/b] Der Code dieses Addons wurde nach meinen Vorgaben mit einem KI-Assistenten (Claude von Anthropic) geschrieben. Alle Funktionen teste ich vor jeder Veröffentlichung im Spiel.[/color]
+
 [i]English: Remembers what every loot source (resource nodes, containers, corpses, critters, pickpocketing, theft) has dropped for you so far and shows it next to the crosshair. English and German texts.[/i]
 
 [color=#FF6666][b]Beta – Daten müssen eventuell gelöscht werden:[/b] Solange What Drops Here? in der Beta ist, kann sich noch ändern, wie Quellen und Beute eingeordnet werden – zum Beispiel werden eingefangene Kleintiere derzeit als Feinde erfasst, und die Truhen am Dunklen Anker landen bei den gewöhnlichen Truhen der Zone. Bereits gesammelte Daten lassen sich nicht immer nachträglich korrigieren. Ein Update kann dann empfehlen, alle Daten zu löschen ([b]/wdh_reset ja[/b]), um saubere Statistiken zu bekommen. Das steht dann immer deutlich in den Änderungen. Ab Version 1.0 bleibt die Datenbank stabil.[/color]
@@ -68,6 +70,14 @@ Besonders gesucht: Berichte aus Verliesen, Prüfungen, von Weltbossen, Taschendi
 [*]Wie gewohnt plündern – im Chat steht zu jeder Plünderung Quelle, Zone, Art und jedes Item mit Kategorie
 [*]Fällt etwas auf (falsche Quelle, falsche Kategorie, fehlende Beute, Lua-Fehler): die Chatzeilen mit kurzer Beschreibung hier in die Kommentare oder als [url=https://github.com/cudddel-spec/WhatDropsHere/issues]Issue auf GitHub[/url]
 [/list]
+
+[size=4][b]Danke[/b][/size]
+[list]
+[*][b]Votan's Fisherman[/b] von votan – die Idee, Informationen direkt am Fadenkreuz zu zeigen
+[*][b]HarvestMap[/b] von Shinni – Rohstoffvorkommen an der Art der Interaktion nach dem Drücken der Interaktionstaste erkennen
+[*][b]Much Smarter AutoLoot[/b] von Lykeion – Gold des Lootfensters aus LOOT_SHARED lesen
+[/list]
+Aus diesen Addons wurde kein Code kopiert.
 
 [size=4][b]Abhängigkeiten[/b][/size]
 [list]

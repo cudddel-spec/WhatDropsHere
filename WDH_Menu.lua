@@ -9,6 +9,7 @@
 -- Die Anzeige-Einstellungen gelten je Charakter, die Debug-Ausgabe fuer den ganzen Account.
 
 local WDH  = WhatDropsHere
+local WDH_STRINGS = WDH.L
 local Menu = {}
 WDH.Menu = Menu
 
