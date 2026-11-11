@@ -34,7 +34,7 @@ Sie sind keine Beutequelle, sondern nur der Gegenstand selbst, immer von geringe
 
 Jeder Fund wird vollständig gespeichert: mit seiner Item-ID und seiner Kategorie (z. B. „Schmiedematerial").
 Ob ein Item am Fadenkreuz mit Namen oder zusammengefasst in seiner Kategorie erscheint, entscheidet erst die Anzeige.
-Die Statistik gilt pro Quelle und Zone und für alle Charaktere deines Accounts.
+Die Statistik gilt pro Quelle und Zone und für alle Charaktere deines Accounts, getrennt je Server (EU/NA).
 
 ## Anzeige am Fadenkreuz
 
@@ -146,10 +146,11 @@ Optional: [LibAddonMenu-2.0](https://www.esoui.com/downloads/info7-LibAddonMenu.
 - `docs/` enthält das Konzept mit Testprotokollen und offenen Fragen sowie die ESOUI-Beschreibungen (Deutsch und Englisch) und die Änderungsliste für ESOUI.
 - Fehler und Ideen gern als [Issue](https://github.com/cudddel-spec/WhatDropsHere/issues).
 - **KI:** Der Code wurde nach Vorgaben des Autors mit einem KI-Assistenten (Claude von Anthropic) geschrieben und im Spiel getestet.
-- Einzige globale Variable ist `WhatDropsHere` (dazu die SavedVariables `WDH_Saved`). Die Loot-Events sind immer angemeldet,
+- Einzige globale Variable ist `WhatDropsHere` (dazu die SavedVariables `WhatDropsHere_Saved`). Die Loot-Events sind immer angemeldet,
   weil jede Plünderung gespeichert wird; `EVENT_MONEY_UPDATE` nur, solange ein von Auto-Loot geleertes Fenster auf Beute wartet.
-- `WDH_Saved` ist bewusst nicht nach Server getrennt: Beute ist auf EU, NA und PTS dieselbe, Charaktere sind über ihre
-  serverübergreifend eindeutige ID gespeichert.
+- `WhatDropsHere_Saved` ist nach Server und Account getrennt: `WhatDropsHere_Saved[Server][@Account]`.
+  Bis 0.3.1 hieß sie `WDH_Saved` und galt für alle; die alten Daten übernimmt der erste Account, der sich nach dem
+  Update einloggt. `WDH_Saved` steht nur noch für diese Übernahme im Manifest und fällt vor 1.0 weg.
 
 ## Danke
 

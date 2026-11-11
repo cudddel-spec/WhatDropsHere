@@ -82,7 +82,7 @@ end
 -- Kurze Uebersicht ueber die gespeicherten Daten
 local function DataSummary()
     local zones, sources, loots = 0, 0, 0
-    for _, zone in pairs(WDH_Saved.zones) do
+    for _, zone in pairs(WDH.sv.zones) do
         local any = false
         for _, rec in pairs(zone) do
             any     = true
@@ -133,7 +133,7 @@ function Menu:Init()
         { type = "header", name = WDH_STRINGS.MENU_HUD_HEADER },
         {
             type = "description",
-            text = string.format(WDH_STRINGS.MENU_CHAR_INFO, WDH_Saved.chars[WDH.charId].name),
+            text = string.format(WDH_STRINGS.MENU_CHAR_INFO, WDH.sv.chars[WDH.charId].name),
         },
         HudCheckbox("hud", WDH_STRINGS.MENU_HUD, WDH_STRINGS.MENU_HUD_TT),
         {
@@ -247,8 +247,8 @@ function Menu:Init()
             type    = "checkbox",
             name    = WDH_STRINGS.MENU_DEBUG,
             tooltip = WDH_STRINGS.MENU_DEBUG_TT,
-            getFunc = function() return WDH_Saved.settings.debug end,
-            setFunc = function(value) WDH_Saved.settings.debug = value end,
+            getFunc = function() return WDH.sv.settings.debug end,
+            setFunc = function(value) WDH.sv.settings.debug = value end,
             default = false,
         },
     })

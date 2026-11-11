@@ -1,6 +1,7 @@
 [size=4][b]0.3.1-beta[/b] (2026-11-08)[/size]
 [list]
 [*]Follows the ESOUI addon rules: only one global variable, the money event is only registered while it is needed. AI disclosure and credits added to the description.
+[*][b]Data per server and account.[/b] The saved data is now stored separately for each server (EU/NA) and account (SavedVariables renamed to WhatDropsHere_Saved). Your existing data is taken over automatically by the first account that logs in after the update; other accounts and the other server start empty.
 [*][b]Items lying around are no longer separate sources.[/b] Weapons and armor lying in the open world (e.g. "Take – Shield") are not recorded any more. Stolen loose items (bread, bottles … from tables) go into one collective entry per zone, "Loose items [theft]", visible with /wdh_zone. Existing data is converted automatically on the first login – no reset needed.
 [*]Taking or stealing several items within two seconds no longer loses the loot of the second and following items.
 [/list]
@@ -23,6 +24,7 @@ First public beta.
 [b]0.3.1-beta[/b] (08.11.2026)
 [list]
 [*]ESOUI-Regeln: nur noch eine globale Variable, das Geld-Event ist nur noch bei Bedarf angemeldet. KI-Hinweis und Danksagungen in der Beschreibung.
+[*][b]Daten je Server und Account.[/b] Die Daten werden jetzt getrennt nach Server (EU/NA) und Account gespeichert (SavedVariables heißen jetzt WhatDropsHere_Saved). Die bisherigen Daten übernimmt automatisch der erste Account, der sich nach dem Update einloggt; weitere Accounts und der andere Server starten leer.
 [*][b]Herumliegende Gegenstände sind keine eigenen Quellen mehr.[/b] Waffen und Rüstungen, die in der offenen Welt herumliegen (z. B. „Nehmen – Schild"), werden nicht mehr gespeichert. Gestohlene Einzelstücke (Brot, Flaschen … vom Tisch) landen in einem Sammeleintrag je Zone, „Einzelne Gegenstände [Diebstahl]", sichtbar mit /wdh_zone. Vorhandene Daten werden beim ersten Einloggen automatisch umgestellt – kein Löschen nötig.
 [*]Mehrere Gegenstände innerhalb von zwei Sekunden nehmen oder stehlen: Ab dem zweiten ging die Beute bisher verloren.
 [/list]

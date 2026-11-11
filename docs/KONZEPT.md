@@ -298,6 +298,9 @@ Offene Entscheidungen (vor 1.0):
 - [ ] **Normal / Veteran** in Verliesen und Prüfungen: gleiche Zonen-ID. `GetCurrentZoneDungeonDifficulty()` mitspeichern?
 - [ ] **Position für die Heatmap:** muss ab dem ersten Tag mitgespeichert werden, sonst gibt es nur Daten ab Einführung
       (kein Fehler, aber keine Historie). Grobes Raster pro Karte reicht, Größe der SavedVariables beachten.
+- [x] **Speicherort je Server und Account** (11.11.2026, ESOUI-Prüfung durch Baertram): `WhatDropsHere_Saved[GetWorldName()][GetDisplayName()]`,
+      vorher `WDH_Saved` für alle. Übernahme der Altdaten durch den ersten Account nach dem Update (0.3.1).
+      **Vor 1.0:** `WDH_Saved` aus `## SavedVariables` im Manifest streichen.
 - [ ] **Sprachabhängige Schlüssel:** Quellen über den Namen in der Client-Sprache. Für das Zusammenführen mehrerer
       Spieler (Merge-Tool) ein Problem. Gibt es eine sprachunabhängige Kennung? Sonst bewusst so lassen und dokumentieren.
 - [ ] **Sammelplünderung (`#aoe`):** bisher im Spiel nie beobachtet. Schlüssel beibehalten oder streichen?

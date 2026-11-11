@@ -5,7 +5,7 @@
 --   1. EVENT_LOOT_UPDATED (erstes)  -> Quelle sichern (GetLootTargetInfo), Liste lesen
 --   2. EVENT_LOOT_UPDATED (weitere) -> nur neue lootIds ergaenzen
 --      (Auto-Loot-Addons nehmen Items, die Liste wird kuerzer, das Event feuert erneut)
---   3. EVENT_LOOT_CLOSED            -> Sitzung in WDH_Saved schreiben
+--   3. EVENT_LOOT_CLOSED            -> Sitzung in SV schreiben
 --   4. EVENT_LOOT_RECEIVED          -> Spuren (Antiquitaeten), Taschendiebstahl und
 --                                      Beute ohne Lootfenster (siehe unten)
 --
@@ -22,8 +22,9 @@
 -- Die kommt erst mit EVENT_LOOT_RECEIVED (itemId = antiquityId). Spuren werden deshalb
 -- im Lootfenster uebersprungen und beim Empfang der laufenden bzw. letzten Sitzung zugeordnet.
 --
--- Datenmodell (accountweit):
---   WDH_Saved.zones[zoneId][key] = Quelle
+-- Datenmodell (je Server und Account):
+--   WhatDropsHere_Saved[GetWorldName()][GetDisplayName()] = SV
+--   SV.zones[zoneId][key] = Quelle
 --     zoneId 0      = Behaelter aus dem Inventar (ueberall gleich)
 --     key           = Name in Kleinbuchstaben, "#aoe" fuer Sammelpluenderung,
 --                     "pickpocket:" fuer Taschendiebstahl
@@ -102,6 +103,9 @@ end
 -- Interne Zustaende
 -- -----------------------------------------------------------------------------
 
+-- Gespeicherte Daten dieses Accounts auf diesem Server (Teil von WhatDropsHere_Saved, siehe OpenSaved)
+local SV = nil
+
 -- Laufende Pluender-Sitzung (nil, wenn kein Lootfenster offen)
 local WDH_Session = nil
 
@@ -142,7 +146,7 @@ local WDH_Initialized = false
 -- -----------------------------------------------------------------------------
 
 local function dbg(msg)
-    if not WDH_Saved or not WDH_Saved.settings.debug then return end
+    if not SV or not SV.settings.debug then return end
     d(WDH_STRINGS.DEBUG_PREFIX .. msg)
 end
 
@@ -271,7 +275,7 @@ local function RecordName(rec)
 end
 
 local function GetRecord(zoneId, key, name, kind)
-    local zones = WDH_Saved.zones
+    local zones = SV.zones
     zones[zoneId] = zones[zoneId] or {}
     local rec = zones[zoneId][key]
     if not rec then
@@ -282,7 +286,7 @@ local function GetRecord(zoneId, key, name, kind)
 end
 
 local function FindRecord(zoneId, key)
-    local zone = WDH_Saved.zones[zoneId]
+    local zone = SV.zones[zoneId]
     return zone and zone[key]
 end
 
@@ -487,7 +491,7 @@ local function CommitSession(session)
         WDH_Last.itemIds  = session.itemIds
     end
     -- Fuer /wdh ohne Argument auch nach Neustart merken
-    WDH_Saved.last = { zoneId = session.zoneId, key = session.key }
+    SV.last = { zoneId = session.zoneId, key = session.key }
 
     dbg(string.format(WDH_STRINGS.DEBUG_SESSION,
         session.name, ZoneName(session.zoneId), tostring(session.targetType),
@@ -808,7 +812,7 @@ WDH.SHOW_OFF       = SHOW_OFF
 
 -- Anzeige-Einstellungen des eingeloggten Charakters
 function WDH.Settings()
-    return WDH_Saved.chars[WDH.charId].settings
+    return SV.chars[WDH.charId].settings
 end
 
 -- Andere Charaktere des Accounts mit gespeicherten Einstellungen: Namen und IDs, sortiert.
@@ -817,7 +821,7 @@ function WDH.OtherCharacters()
     local list = {}
     for i = 1, GetNumCharacters() do
         local name, _, _, _, _, _, id = GetCharacterInfo(i)
-        if id ~= WDH.charId and WDH_Saved.chars[id] then
+        if id ~= WDH.charId and SV.chars[id] then
             list[#list + 1] = { name = zo_strformat("<<1>>", name), id = id }
         end
     end
@@ -832,9 +836,9 @@ end
 
 -- Uebernimmt die Anzeige-Einstellungen eines anderen Charakters
 function WDH.CopySettingsFrom(charId)
-    local source = WDH_Saved.chars[charId]
+    local source = SV.chars[charId]
     if not source or charId == WDH.charId then return false end
-    WDH_Saved.chars[WDH.charId].settings = CopyDisplay(source.settings)
+    SV.chars[WDH.charId].settings = CopyDisplay(source.settings)
     if WDH.Hud then WDH.Hud:Invalidate() end
     return true
 end
@@ -885,7 +889,7 @@ end
 
 local function SearchZones(needle, zoneIds, found)
     for _, zoneId in ipairs(zoneIds) do
-        for key, rec in pairs(WDH_Saved.zones[zoneId] or {}) do
+        for key, rec in pairs(SV.zones[zoneId] or {}) do
             if zo_plainstrfind(key, needle) or (rec.collective and zo_plainstrfind(MakeKey(RecordName(rec)), needle)) then
                 found[#found + 1] = { zoneId = zoneId, rec = rec }
             end
@@ -902,7 +906,7 @@ local function SearchRecords(text)
     SearchZones(needle, { here, 0 }, found)
     if #found == 0 then
         local others = {}
-        for zoneId in pairs(WDH_Saved.zones) do
+        for zoneId in pairs(SV.zones) do
             if zoneId ~= here and zoneId ~= 0 then others[#others + 1] = zoneId end
         end
         SearchZones(needle, others, found)
@@ -914,7 +918,7 @@ end
 function WDH:PrintZones()
     d(WDH_STRINGS.ZONES_HEADER)
     local any = false
-    for zoneId, zone in pairs(WDH_Saved.zones) do
+    for zoneId, zone in pairs(SV.zones) do
         local sources, loots = 0, 0
         for _, rec in pairs(zone) do
             sources = sources + 1
@@ -930,8 +934,8 @@ end
 
 -- Alle gesammelten Daten loeschen, Einstellungen bleiben (/wdh_reset ja, Menue)
 function WDH:ResetData()
-    WDH_Saved.zones = {}
-    WDH_Saved.last  = nil
+    SV.zones = {}
+    SV.last  = nil
     WDH_Last.zoneId, WDH_Last.key = nil, nil
     WDH_Last.lootKey, WDH_Last.lootSeen = nil, nil
     WDH.Hud:Invalidate()
@@ -967,7 +971,7 @@ local function RegisterSlashCommands()
     SLASH_COMMANDS["/wdh_zone"] = function()
         local zoneId = CurrentZoneId()
         d(string.format(WDH_STRINGS.ZONE_HEADER, ZoneName(zoneId)))
-        local zone = WDH_Saved.zones[zoneId]
+        local zone = SV.zones[zoneId]
         if not zone or next(zone) == nil then
             d(WDH_STRINGS.RECORD_NONE)
             return
@@ -1012,8 +1016,8 @@ local function RegisterSlashCommands()
     end
 
     SLASH_COMMANDS["/wdh_debug"] = function()
-        WDH_Saved.settings.debug = not WDH_Saved.settings.debug
-        d(WDH_Saved.settings.debug and WDH_STRINGS.DEBUG_ON or WDH_STRINGS.DEBUG_OFF)
+        SV.settings.debug = not SV.settings.debug
+        d(SV.settings.debug and WDH_STRINGS.DEBUG_ON or WDH_STRINGS.DEBUG_OFF)
     end
 
     SLASH_COMMANDS["/wdh_names"] = function(args)
@@ -1042,10 +1046,10 @@ end
 -- Initialisierung
 -- -----------------------------------------------------------------------------
 
--- Bis 0.2 lagen die Anzeige-Einstellungen Account-weit in WDH_Saved.settings.
+-- Bis 0.2 lagen die Anzeige-Einstellungen Account-weit in SV.settings.
 -- Sie werden zur Vorlage, mit der jeder Charakter beim ersten Einloggen startet.
 local function MigrateAccountDisplay()
-    local old = WDH_Saved.settings
+    local old = SV.settings
     if old.showQuality == nil and old.hud == nil then return end
     local template = {}
     for k in pairs(DEFAULT_DISPLAY) do template[k] = old[k] end
@@ -1059,7 +1063,7 @@ local function MigrateAccountDisplay()
     end
     for k in pairs(DEFAULT_DISPLAY) do old[k] = nil end
     old.showQuality = nil
-    WDH_Saved.template = CopyDisplay(template)
+    SV.template = CopyDisplay(template)
 end
 
 -- Fuehrt eine gespeicherte Quelle in eine andere zusammen (Migration)
@@ -1100,7 +1104,7 @@ end
 -- Bis 0.3.0 wurde jeder herumliegende Gegenstand eine eigene Quelle.
 -- Ohne Lootfenster: targetType fehlt. Gestohlene -> Sammeleintrag der Zone, sonst loeschen.
 local function MigrateLooseItems()
-    for zoneId, zone in pairs(WDH_Saved.zones) do
+    for zoneId, zone in pairs(SV.zones) do
         local stolen = {}
         for key, rec in pairs(zone) do
             if rec.targetType == nil and not rec.collective then
@@ -1122,31 +1126,50 @@ local function MigrateLooseItems()
     end
 end
 
+-- Bis 0.3.1 hiess die SavedVariable WDH_Saved und galt fuer alle Server und Accounts.
+-- Jetzt: WhatDropsHere_Saved[Server][@Account]. Die alten Daten uebernimmt der erste Account,
+-- der sich nach dem Update einloggt (bisher hat ohnehin jeder Account in dieselbe Tabelle geschrieben);
+-- danach wird WDH_Saved geleert und beim naechsten Speichern aus der Datei entfernt.
+local function OpenSaved()
+    if type(WhatDropsHere_Saved) ~= "table" then WhatDropsHere_Saved = {} end
+    local world, account = GetWorldName(), GetDisplayName()
+    local root = WhatDropsHere_Saved
+    root[world] = root[world] or {}
+    local data = root[world][account]
+    if not data then
+        data = type(WDH_Saved) == "table" and WDH_Saved or {}
+        root[world][account] = data
+    end
+    WDH_Saved = nil
+    return data
+end
+
 local function InitSaved()
-    if type(WDH_Saved) ~= "table" then WDH_Saved = {} end
-    WDH_Saved.zones = WDH_Saved.zones or {}
-    if (WDH_Saved.version or SAVED_VERSION) < 3 then MigrateLooseItems() end
-    WDH_Saved.version  = SAVED_VERSION
-    WDH_Saved.settings = WDH_Saved.settings or {}
+    SV = OpenSaved()
+    WDH.sv = SV
+    SV.zones = SV.zones or {}
+    if (SV.version or SAVED_VERSION) < 3 then MigrateLooseItems() end
+    SV.version  = SAVED_VERSION
+    SV.settings = SV.settings or {}
     MigrateAccountDisplay()
-    FillDefaults(WDH_Saved.settings, DEFAULT_ACCOUNT)
+    FillDefaults(SV.settings, DEFAULT_ACCOUNT)
 
     -- Anzeige-Einstellungen je Charakter (ID bleibt bei Umbenennung gleich)
-    WDH_Saved.chars = WDH_Saved.chars or {}
+    SV.chars = SV.chars or {}
     local charId = GetCurrentCharacterId()
-    local char = WDH_Saved.chars[charId]
+    local char = SV.chars[charId]
     if not char then
-        char = { settings = CopyDisplay(WDH_Saved.template or DEFAULT_DISPLAY) }
-        WDH_Saved.chars[charId] = char
+        char = { settings = CopyDisplay(SV.template or DEFAULT_DISPLAY) }
+        SV.chars[charId] = char
     end
     char.name = zo_strformat("<<1>>", GetUnitName("player"))
     FillDefaults(char.settings, DEFAULT_DISPLAY)
     WDH.charId = charId
 
-    WDH_Saved.zones = WDH_Saved.zones or {}
-    if WDH_Saved.last then
-        WDH_Last.zoneId = WDH_Saved.last.zoneId
-        WDH_Last.key    = WDH_Saved.last.key
+    SV.zones = SV.zones or {}
+    if SV.last then
+        WDH_Last.zoneId = SV.last.zoneId
+        WDH_Last.key    = SV.last.key
     end
 end
 
