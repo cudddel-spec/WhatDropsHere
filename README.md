@@ -141,7 +141,9 @@ Optional: [LibAddonMenu-2.0](https://www.esoui.com/downloads/info7-LibAddonMenu.
 
 ## Entwicklung
 
-- Die Addon-Dateien liegen direkt im Hauptordner des Repositorys; ein Klon im `AddOns`-Ordner lässt sich sofort im Spiel testen.
+- Das Repository liegt **nicht** im `AddOns`-Ordner: Minion ersetzt bei jedem Update den ganzen Addon-Ordner
+  (samt `.git`, `docs`, `tools`). `python tools/deploy.py [AddOns-Ordner]` kopiert die Spieldateien zum Testen nach
+  `AddOns/WhatDropsHere` (Standard: `%ESO_ADDONS%` bzw. `D:\Dokumente\Elder Scrolls Online\live\AddOns`), danach `/reloadui`.
 - `python tools/build_release.py` baut `dist/WhatDropsHere-<Version>.zip` mit nur den Dateien, die Spieler brauchen.
 - `docs/` enthält das Konzept mit Testprotokollen und offenen Fragen sowie die ESOUI-Beschreibungen (Deutsch und Englisch) und die Änderungsliste für ESOUI.
 - Fehler und Ideen gern als [Issue](https://github.com/cudddel-spec/WhatDropsHere/issues).
