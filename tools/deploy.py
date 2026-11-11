@@ -30,8 +30,14 @@ def main():
     if os.path.exists(os.path.join(target, ".git")):
         raise SystemExit(f"{target} contains a git repository - not deleting it")
 
-    if os.path.isdir(target):
-        shutil.rmtree(target)
+    # Empty the folder but keep it (it may be open in Explorer or a terminal, then it cannot be removed)
+    os.makedirs(target, exist_ok=True)
+    for name in os.listdir(target):
+        path = os.path.join(target, name)
+        if os.path.isdir(path) and not os.path.islink(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)
     count = 0
     for path in build_release.collect_files():
         dest = os.path.join(target, os.path.relpath(path, root))
