@@ -78,6 +78,25 @@ ohne Kampf und ohne Lootfenster. Sie liefern Köder und Handwerkswaren (z. B. Sc
 - Nachlauffrist (2 Sek., „kurz nach Lootfenster") gilt nur nach echten Lootfenstern; vorher verschluckte sie den
   zweiten von mehreren schnell genommenen Gegenständen.
 
+### Ausgrabungen
+
+Test 17.11.2026 (Debug): Während einer Ausgrabung kommt **kein** `EVENT_LOOT_RECEIVED`, auch nicht nach dem Verlassen.
+Reihenfolge: Interaktion „Ausgraben – Ausgrabungsstätte“, 3,8 Sek. später `EVENT_ANTIQUITY_DIGGING_READY_TO_PLAY`,
+dann `…_BONUS_LOOT_UNEARTHED` / `…_ANTIQUITY_UNEARTHED` je Fund, `…_GAME_OVER(0)` bei Erfolg, `…_EXIT_RESPONSE(true)`.
+
+- Die Liste der Zusammenfassung (`GetNumDigSpotBonusLootRewards`, `GetDigSpotBonusLootRewardInfo`,
+  `GetDigSpotNewLeadRewardAntiquityId`) gibt es nur in `internalingame`, für Addons `nil` (Lua-Fehler im Test 17.11.2026).
+- Deshalb: Zwischen `READY_TO_PLAY` und `EXIT_RESPONSE(true)` + 2 Sek. sind angemeldet
+  `EVENT_INVENTORY_SINGLE_SLOT_UPDATE` (Rucksack und Handwerkstasche, Grund DEFAULT, `stackCountChange > 0`),
+  `EVENT_MONEY_UPDATE` und `EVENT_ANTIQUITY_LEAD_ACQUIRED`. Alles davon ist Beifang.
+- Schlüssel: Name der Interaktion („Ausgrabungsstätte“) + Zone, `kind = "dig"`, Art `excavation` mit eigener Schwelle.
+- Die Antiquität selbst ist kein Beifang: nicht gezählt, nur `rec.digs[antiquityId]` (Auswertung nach Schwierigkeit später möglich).
+  Gibt sie ein Item als Belohnung (`GetAntiquityRewardId` → `GetItemRewardItemId`), wird dieses Item übersprungen.
+- Nur gelungene Ausgrabungen zählen (`ANTIQUITY_DIGGING_GAME_OVER_FLAGS_VICTORY`, im Test 0).
+- Test 21.11.2026: Neue Spur kommt über `EVENT_ANTIQUITY_LEAD_ACQUIRED` und erscheint als „Spur: …“;
+  Gold und Beifang stimmen mit der Zusammenfassung des Spiels überein.
+- Offen: Bekommt man bei misslungener Ausgrabung den schon freigelegten Beifang trotzdem? (Wird bisher verworfen.)
+
 ### Erneut geöffnete Quellen (Reste im Lootfenster)
 
 MSAL kann so eingestellt werden, dass nur ein Teil automatisch genommen wird; der Rest bleibt im Lootfenster.

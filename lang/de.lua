@@ -89,6 +89,11 @@ Override(WDH_STRINGS, {
 
     -- Sonstiges
     PICKPOCKET_UNKNOWN  = "Unbekanntes Opfer",
+    LEAD_NAME           = "Spur: %s",
+    DIG_SITE            = "Ausgrabungsstätte",
+    DEBUG_DIG_START     = "Ausgrabung: %s (%s)",
+    DEBUG_DIG_FAILED    = "Ausgrabung misslungen (%s), nicht gezählt.",
+    DEBUG_DIG_REWARD    = "  %s: Belohnung der Antiquität, nicht gezählt",
     ZONE_ANYWHERE       = "überall",
     SET_UNKNOWN         = "Set #%d",
 })
@@ -115,6 +120,8 @@ WDH_STRINGS.MENU_OTHER            = "Kleintiere und Sonstiges"
 WDH_STRINGS.MENU_OTHER_TT         = "Mit \"Nehmen\" eingesammelte Kleintiere und Gegenstände ohne Lootfenster."
 WDH_STRINGS.MENU_THEFT            = "Diebstahl"
 WDH_STRINGS.MENU_THEFT_TT         = "Fremde Behälter, Tresore und Gegenstände, die jemandem gehören. Werden getrennt von gleichnamigen freien Behältern gespeichert."
+WDH_STRINGS.MENU_EXCAVATION       = "Ausgrabungsstätten"
+WDH_STRINGS.MENU_EXCAVATION_TT    = "Beifang gelungener Ausgrabungen. Die Antiquität selbst wird nicht gezählt."
 WDH_STRINGS.MENU_DATA_HEADER      = "Datenbank"
 WDH_STRINGS.MENU_DATA_INFO        = "Jede Plünderung wird vollständig gespeichert: jedes Item mit Item-ID und Kategorie. Alle Einstellungen oben betreffen nur die Anzeige und lassen sich jederzeit ändern, auch rückwirkend."
 WDH_STRINGS.MENU_NAME_QUALITY     = "Mit Namen anzeigen ab Qualität"

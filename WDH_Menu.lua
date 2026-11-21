@@ -180,6 +180,7 @@ function Menu:Init()
         TypeDropdown("showResource",  WDH_STRINGS.MENU_RESOURCES,  WDH_STRINGS.MENU_RESOURCES_TT,  typeNames, typeValues),
         TypeDropdown("showOther",     WDH_STRINGS.MENU_OTHER,      WDH_STRINGS.MENU_OTHER_TT,      typeNames, typeValues),
         TypeDropdown("showTheft",     WDH_STRINGS.MENU_THEFT,      WDH_STRINGS.MENU_THEFT_TT,      typeNames, typeValues),
+        TypeDropdown("showExcavation", WDH_STRINGS.MENU_EXCAVATION, WDH_STRINGS.MENU_EXCAVATION_TT, typeNames, typeValues),
 
         -- Einstellungen anderer Charaktere
         { type = "header", name = WDH_STRINGS.MENU_COPY_HEADER },

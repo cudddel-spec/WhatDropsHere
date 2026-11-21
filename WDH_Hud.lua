@@ -160,6 +160,7 @@ local TYPE_SETTING = {
     resource  = "showResource",
     other     = "showOther",
     theft     = "showTheft",
+    excavation = "showExcavation",
 }
 
 -- Mindestqualitaet fuer die Anzeige dieser Quelle, nil = fuer diese Art ausgeschaltet.

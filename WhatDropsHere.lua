@@ -75,7 +75,11 @@ local DEFAULT_DISPLAY = {
     showResource  = ITEM_DISPLAY_QUALITY_NORMAL,  -- Rohstoffvorkommen
     showOther     = ITEM_DISPLAY_QUALITY_NORMAL,  -- Kleintiere, einzelne Gegenstaende, Sonstiges
     showTheft     = ITEM_DISPLAY_QUALITY_NORMAL,  -- Diebstahl aus fremdem Besitz
+    showExcavation = ITEM_DISPLAY_QUALITY_NORMAL, -- Ausgrabungsstaetten (Beifang)
 }
+
+-- Alle Schwellen je Art (fuer /wdh_show)
+local TYPE_THRESHOLDS = { "showEnemy", "showContainer", "showResource", "showOther", "showTheft", "showExcavation" }
 
 -- Bis 0.2: Schalter je Art + eine gemeinsame Schwelle (Account-weit)
 local LEGACY_TYPE_SWITCH = {
@@ -220,7 +224,9 @@ local function ItemName(id)
     end
     local leadId = id:match("^lead:(%d+)$")
     if leadId then
-        return zo_strformat(SI_TOOLTIP_ITEM_NAME, GetAntiquityName(tonumber(leadId)))
+        -- Als Spur kennzeichnen: der Name ist der der Antiquitaet, die man erst ausgraben muss
+        return string.format(WDH_STRINGS.LEAD_NAME,
+            zo_strformat(SI_TOOLTIP_ITEM_NAME, GetAntiquityName(tonumber(leadId))))
     end
     return (id:gsub("^n:", ""))
 end
@@ -299,12 +305,14 @@ end
 --   container -> Truhen, Saecke, Faesser, Kisten, Rucksaecke ... (alle uebrigen Lootfenster)
 --   theft     -> Diebstahl aus fremdem Besitz (isOwned): Behaelter, Tresore, einzelne Gegenstaende
 --   other     -> Taschendiebstahl und "Nehmen" ohne Lootfenster (Kleintiere, einzelne Gegenstaende)
+--   excavation -> Ausgrabungsstaetten (Beifang der Ausgrabung, ohne die Antiquitaet selbst)
 
 local function IsRecentInteraction(name)
     return WDH_Interact.name == name and Now() - WDH_Interact.at <= INTERACT_VALID_MS
 end
 
 local function DetermineSourceType(name, kind)
+    if kind == "dig" then return "excavation" end
     local recent = IsRecentInteraction(name)
     if recent and WDH_Interact.itype == INTERACTION_HARVEST then return "resource" end
     if kind == "pickpocket" then return "other" end
@@ -369,12 +377,13 @@ end
 -- Was davon mit Namen angezeigt wird, entscheidet erst die Anzeige.
 local function AddItem(session, itemLink, quantity)
     local entry = CAT.Classify(itemLink)
+    local quality = entry.quality
     session.itemIds[entry.itemId] = true
 
-    AddStat(session.items, entry.itemId, quantity, entry.quality, entry.key)
-    AddStat(session.cats, entry.key, quantity, entry.quality)
+    AddStat(session.items, entry.itemId, quantity, quality, entry.key)
+    AddStat(session.cats, entry.key, quantity, quality)
     if entry.setId then
-        local s = AddStat(session.sets, entry.setId, quantity, entry.quality)
+        local s = AddStat(session.sets, entry.setId, quantity, quality)
         s.slots = s.slots or {}
         s.slots[entry.slot] = (s.slots[entry.slot] or 0) + quantity
     end
@@ -477,6 +486,11 @@ local function CommitSession(session)
         rec.type = session.sourceType
     end
     rec.last       = GetTimeStamp()
+    -- Ausgrabung: ausgegrabene Antiquitaet (nicht als Beute gezaehlt)
+    if session.antiquityId then
+        rec.digs = rec.digs or {}
+        rec.digs[session.antiquityId] = (rec.digs[session.antiquityId] or 0) + 1
+    end
 
     for id, s in pairs(session.sets)  do MergeStat(rec.sets,  id, s) end
     for id, s in pairs(session.items) do MergeStat(rec.items, id, s) end
@@ -509,7 +523,7 @@ local function AddLeadToLastRecord(antiquityId)
     local quality = GetAntiquityQuality(antiquityId)
     MergeStat(rec.items, "lead:" .. antiquityId, { n = 1, q = { [quality] = 1 }, cat = "LEAD" })
     MergeStat(rec.cats, "LEAD", { n = 1, q = { [quality] = 1 } })
-    dbg(string.format(WDH_STRINGS.DEBUG_ITEM, ItemName("lead:" .. antiquityId), 1, "Spur -> " .. rec.name))
+    dbg(string.format(WDH_STRINGS.DEBUG_ITEM, ItemName("lead:" .. antiquityId), 1, rec.name))
     return true
 end
 
@@ -702,6 +716,110 @@ local function OnInteractionStart()
     EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_InteractType")
     EVENT_MANAGER:RegisterForUpdate(ADDON_NAME .. "_InteractType", INTERACT_POLL_MS, PollInteractionType)
     dbg(string.format(WDH_STRINGS.DEBUG_INTERACT, tostring(action), WDH_Interact.name))
+end
+
+-- -----------------------------------------------------------------------------
+-- Ausgrabungen: Erfassung
+-- Die Beute einer Ausgrabung kommt nicht ueber EVENT_LOOT_RECEIVED (Test 17.11.2026), und die Liste
+-- der Zusammenfassung (GetDigSpotBonusLootRewardInfo) ist fuer Addons nicht freigegeben.
+-- Deshalb gilt: Was zwischen Start und Verlassen der Ausgrabung (plus kurzer Nachlauf) ins Inventar
+-- oder die Handwerkstasche kommt, an Gold dazukommt oder als Spur erworben wird, ist ihr Beifang.
+-- Die Antiquitaet selbst ist durch die Spur sicher und kein Beifang: nicht gezaehlt (auch ihre
+-- Belohnung nicht, z. B. ein Einrichtungsgegenstand), nur ihre ID in rec.digs.
+-- Gezaehlt werden nur gelungene Ausgrabungen.
+-- Die Events sind nur waehrend einer Ausgrabung angemeldet.
+-- -----------------------------------------------------------------------------
+
+local DIG_NAME_VALID_MS = 30000  -- Interaktion "Ausgraben" bis zum Start der Ausgrabung (im Test 3,8 Sek.)
+local DIG_GRACE_MS      = 2000   -- Nachlauf nach dem Verlassen der Ausgrabung
+
+local DigSession = nil
+local OnDigItem, OnDigGold, OnDigLead  -- unten definiert
+
+local function SetDigWatch(on)
+    local ns = ADDON_NAME .. "_DigLoot"
+    EVENT_MANAGER:UnregisterForEvent(ns .. "Bag",   EVENT_INVENTORY_SINGLE_SLOT_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(ns .. "Craft", EVENT_INVENTORY_SINGLE_SLOT_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(ns .. "Gold",  EVENT_MONEY_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(ns .. "Lead",  EVENT_ANTIQUITY_LEAD_ACQUIRED)
+    if not on then return end
+    for suffix, bag in pairs({ Bag = BAG_BACKPACK, Craft = BAG_VIRTUAL }) do
+        EVENT_MANAGER:RegisterForEvent(ns .. suffix, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, OnDigItem)
+        EVENT_MANAGER:AddFilterForEvent(ns .. suffix, EVENT_INVENTORY_SINGLE_SLOT_UPDATE,
+            REGISTER_FILTER_BAG_ID, bag,
+            REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
+    end
+    EVENT_MANAGER:RegisterForEvent(ns .. "Gold", EVENT_MONEY_UPDATE, OnDigGold)
+    EVENT_MANAGER:RegisterForEvent(ns .. "Lead", EVENT_ANTIQUITY_LEAD_ACQUIRED, OnDigLead)
+end
+
+-- Item-ID, die die Antiquitaet selbst als Belohnung gibt (nicht als Beifang zaehlen)
+local function AntiquityRewardItemId(antiquityId)
+    local rewardId = GetAntiquityRewardId(antiquityId)
+    if rewardId and rewardId ~= 0 and GetRewardType(rewardId) == REWARD_ENTRY_TYPE_ITEM then
+        return GetItemRewardItemId(rewardId)
+    end
+end
+
+function OnDigItem(_, bagId, slotIndex, _, _, _, stackCountChange)
+    if not DigSession or not stackCountChange or stackCountChange <= 0 then return end
+    local itemLink = GetItemLink(bagId, slotIndex)
+    if itemLink == "" then return end
+    if GetItemLinkItemId(itemLink) == DigSession.rewardItemId then
+        dbg(string.format(WDH_STRINGS.DEBUG_DIG_REWARD, itemLink))
+        return
+    end
+    AddItem(DigSession, itemLink, stackCountChange)
+end
+
+function OnDigGold(_, newMoney, oldMoney)
+    if DigSession and newMoney > oldMoney then
+        DigSession.gold = DigSession.gold + (newMoney - oldMoney)
+    end
+end
+
+function OnDigLead(_, antiquityId)
+    if DigSession then AddLead(DigSession, antiquityId) end
+end
+
+local function FinishDig()
+    EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_DigFinish")
+    SetDigWatch(false)
+    local session = DigSession
+    DigSession = nil
+    if not session then return end
+    if not session.victory then
+        dbg(string.format(WDH_STRINGS.DEBUG_DIG_FAILED, tostring(session.gameOverFlags)))
+        for _, line in ipairs(session.lines) do dbg(line) end
+        return
+    end
+    CommitSession(session)
+end
+
+local function OnDigReady()
+    FinishDig()  -- vorherige Ausgrabung, falls ihr Ende nicht ankam
+    local name = WDH_Interact.name
+    if not name or Now() - WDH_Interact.at > DIG_NAME_VALID_MS then name = WDH_STRINGS.DIG_SITE end
+    local antiquityId = GetDigSpotAntiquityId()
+    DigSession = NewSession(name, nil, "dig")
+    DigSession.antiquityId  = antiquityId
+    DigSession.rewardItemId = AntiquityRewardItemId(antiquityId)
+    SetDigWatch(true)
+    dbg(string.format(WDH_STRINGS.DEBUG_DIG_START, name,
+        zo_strformat(SI_TOOLTIP_ITEM_NAME, GetAntiquityName(antiquityId))))
+end
+
+local function OnDigGameOver(_, gameOverFlags)
+    if not DigSession then return end
+    DigSession.victory       = gameOverFlags == ANTIQUITY_DIGGING_GAME_OVER_FLAGS_VICTORY
+    DigSession.gameOverFlags = gameOverFlags
+end
+
+-- Ausgrabung verlassen (bzw. Szene beendet): Nachlauf, dann speichern
+local function OnDigExit(_, accept)
+    if not DigSession or not accept then return end
+    EVENT_MANAGER:UnregisterForUpdate(ADDON_NAME .. "_DigFinish")
+    EVENT_MANAGER:RegisterForUpdate(ADDON_NAME .. "_DigFinish", DIG_GRACE_MS, FinishDig)
 end
 
 -- Gold, das ein Auto-Loot-Addon aus einem leer vorgefundenen Fenster genommen hat
@@ -1008,7 +1126,7 @@ local function RegisterSlashCommands()
         end
         -- Gilt fuer alle eingeschalteten Arten; einzeln im Menue
         local settings = WDH.Settings()
-        for key in pairs(LEGACY_TYPE_SWITCH) do
+        for _, key in ipairs(TYPE_THRESHOLDS) do
             if settings[key] ~= SHOW_OFF then settings[key] = quality end
         end
         WDH.Hud:Invalidate()
@@ -1183,10 +1301,15 @@ local function RegisterLootTracking()
         FinishSession()
         FinishPending()
         FinishDirectSession()
+        FinishDig()
     end)
     -- Quelle fuer Beute ohne Lootfenster merken. Der Hook gibt nichts zurueck,
     -- die Interaktion laeuft also normal weiter.
     ZO_PreHook(INTERACTIVE_WHEEL_MANAGER, "StartInteraction", OnInteractionStart)
+    -- Ausgrabungen
+    EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_DigReady",    EVENT_ANTIQUITY_DIGGING_READY_TO_PLAY, OnDigReady)
+    EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_DigGameOver", EVENT_ANTIQUITY_DIGGING_GAME_OVER,     OnDigGameOver)
+    EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "_DigExit",     EVENT_ANTIQUITY_DIGGING_EXIT_RESPONSE, OnDigExit)
 end
 
 EVENT_MANAGER:RegisterForEvent(
