@@ -86,7 +86,7 @@ local WDH_STRINGS = {
     -- Misc
     PICKPOCKET_UNKNOWN  = "Unknown victim",
     LEAD_NAME           = "Lead: %s",
-    DIG_SITE            = "Dig Site",  -- Rueckfall, wenn die Interaktion "Ausgraben" fehlt
+    DIG_SITE            = "Dig Site",  -- fallback when the "Excavate" interaction is missing
     -- %s = dig site, %s = antiquity
     DEBUG_DIG_START     = "Excavation: %s (%s)",
     -- %s = game over flags
