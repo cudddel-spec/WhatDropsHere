@@ -1,6 +1,6 @@
 # Änderungen
 
-## Unveröffentlicht
+## 0.4.0-beta (22.11.2026)
 
 - **Ausgrabungsstätten.** Der Beifang gelungener Ausgrabungen (Plunder, Ausrüstung, Stilmaterial, Gold, Spuren)
   wird je Ausgrabungsstätte und Zone gezählt und am Fadenkreuz angezeigt. Die Antiquität selbst zählt nicht als Beute,

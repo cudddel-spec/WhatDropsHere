@@ -4,7 +4,7 @@
 
 [b]Your own loot table for every source in Tamriel – right next to your crosshair.[/b]
 
-What Drops Here? remembers what every loot source has given you so far: resource nodes, chests and containers, corpses, critters, pickpocketing and theft. Aim at a source and you see its statistics before you loot it.
+What Drops Here? remembers what every loot source has given you so far: resource nodes, chests and containers, corpses, critters, dig sites, pickpocketing and theft. Aim at a source and you see its statistics before you loot it.
 
 ESO has no fixed loot tables like other games: almost every source can drop almost anything, and a lot depends on zone and level. So instead of guessing, What Drops Here? builds [b]your personal statistics[/b], source by source, as you play.
 
@@ -22,7 +22,8 @@ ESO has no fixed loot tables like other games: almost every source can drop almo
 [*][b]Critters[/b] you pick up with "Take" (insects, jellyfish, moths …)
 [*][b]Pickpocketing[/b] and [b]theft[/b] from owned containers – stored separately
 [*][b]Stolen loose items[/b] (bread, bottles, goblets … from tables and shelves) – one collective entry per zone, "Loose items [theft]"
-[*][b]Leads[/b] (Antiquities)
+[*][b]Leads[/b] (Antiquities), shown as "Lead: <antiquity>"
+[*][b]Dig sites[/b] – the bonus loot of successful excavations (treasures, gear, style materials, gold, leads); the antiquity itself is not counted
 [/list]
 [b]Not tracked:[/b] weapons and armor lying around in the open world (e.g. a shield you pick up with "Take"). They are not a loot source but simply the item itself, always of low quality.
 Every find is stored with its item ID and category, per source and zone, for all characters of your account (separately per server).
@@ -32,7 +33,7 @@ Every find is stored with its item ID and category, per source and zone, for all
 [*]How often you looted the source, average gold, and for each entry the amount and the share of loots it appeared in
 [*]Also works for [b]living[/b] enemies, animals and NPCs (outside of combat)
 [*]Hidden in combat
-[*]A quality threshold per source type (or off): enemies, chests and containers, resources, critters and other, theft – e.g. resources from green, enemies from purple
+[*]A quality threshold per source type (or off): enemies, chests and containers, resources, critters and other, theft, dig sites – e.g. resources from green, enemies from purple
 [*][b]Display settings per character[/b], can be copied from another character; the recorded data is shared by all characters of your account
 [*][b]All settings only affect the display[/b] – everything is always recorded, and changes apply to past data as well
 [/list]

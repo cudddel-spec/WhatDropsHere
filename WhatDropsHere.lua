@@ -52,7 +52,7 @@ local INTERACT_POLL_MS   = 100   -- poll interval for the interaction type after
 -- -----------------------------------------------------------------------------
 -- WhatDropsHere is the addon's only global variable (created in lang/en.lua)
 local WDH = WhatDropsHere
-WDH.VERSION = "0.3.1-beta"  -- same as "## Version" in the manifest
+WDH.VERSION = "0.4.0-beta"  -- same as "## Version" in the manifest
 local CAT = WDH.Categories
 local WDH_STRINGS, WDH_SLOT_NAMES, WDH_CAT_NAMES = WDH.L, WDH.SLOT_NAMES, WDH.CAT_NAMES
 

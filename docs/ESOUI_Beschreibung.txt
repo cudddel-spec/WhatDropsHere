@@ -2,7 +2,7 @@
 
 [color=#FFAA00][b]Hinweis zu KI:[/b] Der Code dieses Addons wurde nach meinen Vorgaben mit einem KI-Assistenten (Claude von Anthropic) geschrieben. Alle Funktionen teste ich vor jeder Veröffentlichung im Spiel.[/color]
 
-[i]English: Remembers what every loot source (resource nodes, containers, corpses, critters, pickpocketing, theft) has dropped for you so far and shows it next to the crosshair. English and German texts.[/i]
+[i]English: Remembers what every loot source (resource nodes, containers, corpses, critters, dig sites, pickpocketing, theft) has dropped for you so far and shows it next to the crosshair. English and German texts.[/i]
 
 [color=#FF6666][b]Beta – Daten müssen eventuell gelöscht werden:[/b] Solange What Drops Here? in der Beta ist, kann sich noch ändern, wie Quellen und Beute eingeordnet werden – zum Beispiel werden eingefangene Kleintiere derzeit als Feinde erfasst, und die Truhen am Dunklen Anker landen bei den gewöhnlichen Truhen der Zone. Bereits gesammelte Daten lassen sich nicht immer nachträglich korrigieren. Ein Update kann dann empfehlen, alle Daten zu löschen ([b]/wdh_reset ja[/b]), um saubere Statistiken zu bekommen. Das steht dann immer deutlich in den Änderungen. Ab Version 1.0 bleibt die Datenbank stabil.[/color]
 
@@ -18,7 +18,8 @@ Eine vollständige Loot-Tabelle wie in anderen Spielen gibt es in ESO nicht: Fas
 [*][b]Kleintiere[/b], die du mit „Nehmen" einsammelst
 [*][b]Taschendiebstahl[/b] und [b]Diebstahl[/b] aus fremden Behältern – getrennt gespeichert
 [*][b]Gestohlene Einzelstücke[/b] (Brot, Flaschen, Kelche … von Tischen und Regalen) – ein Sammeleintrag je Zone, „Einzelne Gegenstände [Diebstahl]"
-[*][b]Spuren[/b] (Antiquitäten)
+[*][b]Spuren[/b] (Antiquitäten), angezeigt als „Spur: <Antiquität>"
+[*][b]Ausgrabungsstätten[/b] – der Beifang gelungener Ausgrabungen (Plunder, Ausrüstung, Stilmaterial, Gold, Spuren); die Antiquität selbst zählt nicht
 [/list]
 [b]Nicht erfasst:[/b] Waffen und Rüstungen, die in der offenen Welt herumliegen (z. B. ein Schild, den du mit „Nehmen" aufhebst). Sie sind keine Beutequelle, sondern nur der Gegenstand selbst, immer von geringer Qualität.
 Jeder Fund wird mit Item-ID und Kategorie gespeichert, pro Quelle und Zone, für alle Charaktere deines Accounts (getrennt je Server).
@@ -28,7 +29,7 @@ Jeder Fund wird mit Item-ID und Kategorie gespeichert, pro Quelle und Zone, für
 [*]Wie oft geplündert, Ø Gold, und je Eintrag Menge und Anteil der Plünderungen in Prozent
 [*]Auch bei [b]lebenden[/b] Gegnern, Tieren und NPCs (außerhalb des Kampfes)
 [*]Im Kampf ausgeblendet
-[*]Eigene Qualitäts-Schwelle je Art der Quelle (oder aus): Feinde, Truhen und Behälter, Rohstoffe, Kleintiere und Sonstiges, Diebstahl – z. B. Rohstoffe ab grün, Feinde ab lila
+[*]Eigene Qualitäts-Schwelle je Art der Quelle (oder aus): Feinde, Truhen und Behälter, Rohstoffe, Kleintiere und Sonstiges, Diebstahl, Ausgrabungsstätten – z. B. Rohstoffe ab grün, Feinde ab lila
 [*][b]Anzeige-Einstellungen je Charakter[/b], übertragbar von anderen Charakteren; die Daten gelten für den ganzen Account
 [*][b]Alle Einstellungen betreffen nur die Anzeige[/b] – gespeichert wird immer alles
 [/list]

@@ -1,3 +1,9 @@
+[size=4][b]0.4.0-beta[/b] (2026-11-22)[/size]
+[list]
+[*][b]Dig sites.[/b] The bonus loot of successful excavations (treasures, gear, style materials, gold, leads) is now recorded per dig site and zone and shown at the crosshair when you aim at a dig site. The antiquity itself is not counted as loot, failed excavations are not counted. New display threshold "Dig sites" in the menu.
+[*]Leads are now shown as "Lead: <antiquity>" (e.g. "Lead: Riven King's Throne"). Before, only the antiquity's name was shown, as if the source had dropped the furnishing itself.
+[/list]
+
 [size=4][b]0.3.1-beta[/b] (2026-11-08)[/size]
 [list]
 [*]Follows the ESOUI addon rules: only one global variable, the money event is only registered while it is needed. AI disclosure and credits added to the description.

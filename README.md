@@ -27,7 +27,9 @@ und vieles hängt von Zone und Level ab. What Drops Here? sammelt deshalb **dein
 - **Taschendiebstahl**
 - **Gestohlene Einzelstücke** ohne Lootfenster (Brot, Flaschen … vom Tisch): ein Sammeleintrag je Zone,
   „Einzelne Gegenstände [Diebstahl]" (`/wdh_zone`, `/wdh einzelne`)
-- **Spuren** (Antiquitäten)
+- **Spuren** (Antiquitäten), angezeigt als „Spur: <Antiquität>"
+- **Ausgrabungsstätten**: Beifang gelungener Ausgrabungen (Plunder, Ausrüstung, Stilmaterial, Gold, Spuren);
+  die Antiquität selbst zählt nicht
 
 **Nicht erfasst:** Waffen und Rüstungen, die in der offenen Welt herumliegen (z. B. „Nehmen – Schild").
 Sie sind keine Beutequelle, sondern nur der Gegenstand selbst, immer von geringer Qualität.
@@ -49,7 +51,7 @@ Im Spiel unter *Einstellungen → Erweiterungen → What Drops Here?* oder mit `
 **Alle Plünderungen werden immer gespeichert.** Die Anzeige-Einstellungen bestimmen nur, was am Fadenkreuz erscheint:
 - Anzeige an/aus, wie viele Einträge
 - **je Art der Quelle eine eigene Schwelle**: „Aus" oder ab welcher Qualität. Arten: **Feinde** (auch lebende),
-  **Truhen und Behälter**, **Rohstoffe**, **Kleintiere und Sonstiges**, **Diebstahl**.
+  **Truhen und Behälter**, **Rohstoffe**, **Kleintiere und Sonstiges**, **Diebstahl**, **Ausgrabungsstätten**.
   So zeigt z. B. ein Farm-Charakter bei Rohstoffen schon grüne Funde, bei Feinden erst lila.
 
 **Je Charakter:** Jeder Charakter hat seine eigenen Anzeige-Einstellungen; im Menü unter *Einstellungen anderer Charaktere*
