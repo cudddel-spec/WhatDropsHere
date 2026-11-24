@@ -28,7 +28,10 @@
 --     zoneId 0      = containers from the inventory (same everywhere)
 --     key           = lower-case name, "#aoe" for collective (AoE) loot,
 --                     "pickpocket:" for pickpocketing
---   source = { name, kind, loots, gold, targetType, last, type, collective, digs, sets = {}, items = {}, cats = {} }
+--   SV.lang          = client language of the last login (GetCVar("language.2"))
+--   SV.contributorId = random ID for sharing data later (no relation to the @account)
+--   source = { name, kind, lang, loots, gold, targetType, last, type, collective, digs, sets = {}, items = {}, cats = {} }
+--     lang       = client language of the name (since 0.4.1; missing in older sources)
 --     collective = collective record (stolen loose items of the zone, key LOOSE_THEFT_KEY)
 --     digs       = { [antiquityId] = count } for dig sites (the antiquity itself is not counted as loot)
 --     items[itemId] = Stat + cat (every find; "lead:<antiquityId>" or "n:<name>" for non-items)
@@ -286,7 +289,8 @@ local function GetRecord(zoneId, key, name, kind)
     zones[zoneId] = zones[zoneId] or {}
     local rec = zones[zoneId][key]
     if not rec then
-        rec = { name = name, kind = kind, loots = 0, gold = 0, sets = {}, items = {}, cats = {} }
+        -- lang: client language the name was recorded in (the key depends on it)
+        rec = { name = name, kind = kind, lang = SV.lang, loots = 0, gold = 0, sets = {}, items = {}, cats = {} }
         zones[zoneId][key] = rec
     end
     return rec
@@ -1263,10 +1267,25 @@ local function OpenSaved()
     return data
 end
 
+-- Random ID for sharing data later (community data): identifies the uploads of this
+-- server/account pair so that a new upload replaces the old one. No relation to the @account.
+local function NewContributorId()
+    local parts = { string.format("%08x", GetTimeStamp() % 0x100000000) }
+    for _ = 1, 4 do
+        parts[#parts + 1] = string.format("%04x", math.random(0, 0xffff))
+    end
+    parts[#parts + 1] = string.format("%04x", GetGameTimeMilliseconds() % 0x10000)
+    return table.concat(parts, "-")
+end
+
 local function InitSaved()
     SV = OpenSaved()
     WDH.sv = SV
     SV.zones = SV.zones or {}
+    -- Client language of the current session; new sources store it as rec.lang.
+    -- Older sources have no lang: they were most likely recorded in this language too.
+    SV.lang = GetCVar("language.2")
+    SV.contributorId = SV.contributorId or NewContributorId()
     if (SV.version or SAVED_VERSION) < 3 then MigrateLooseItems() end
     SV.version  = SAVED_VERSION
     SV.settings = SV.settings or {}

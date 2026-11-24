@@ -404,7 +404,8 @@ annehmen (passt fast immer).
 
 ### Reihenfolge
 
-1. **Addon vorbereiten** (nächste Version): `rec.lang` bzw. `SV.lang` und `SV.contributorId` speichern. Additiv.
+1. ✅ **Addon vorbereiten** (umgesetzt 24.11.2026, unveröffentlicht): `rec.lang` bei neuen Quellen, `SV.lang`
+   (Sprache des letzten Logins) und `SV.contributorId` (bleibt auch bei `/wdh_reset`). Additiv, keine Migration.
 2. **Merge-Skript lokal** mit deinen eigenen Daten (EU + NA, mehrere Accounts) als Testfall; Format von
    `WhatDropsHereData` festlegen; Anzeige „Gemeinschaft“ im Addon.
 3. **Upload-Seite + Server** (minimal), erst mit Testern aus der Gilde.

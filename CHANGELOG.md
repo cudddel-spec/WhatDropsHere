@@ -1,5 +1,11 @@
 # Änderungen
 
+## Unveröffentlicht
+
+- Vorbereitung für geteilte Daten (Gemeinschaftsdaten, siehe `docs/KONZEPT.md`): Neue Quellen speichern die
+  Client-Sprache, in der ihr Name erfasst wurde. Dazu eine zufällige Kennung je Server und Account, die keinen Bezug
+  zum @Account hat. Es wird nichts gesendet; die Daten bleiben wie bisher nur in den SavedVariables.
+
 ## 0.4.0-beta (22.11.2026)
 
 - **Ausgrabungsstätten.** Der Beifang gelungener Ausgrabungen (Plunder, Ausrüstung, Stilmaterial, Gold, Spuren)
