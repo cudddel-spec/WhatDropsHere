@@ -284,6 +284,7 @@ Account-weit bleiben nur Daten und `settings.debug`. Kopieren im Menü, Liste ü
 **Todos nach der Beta:**
 - [ ] **Datenbanken extern zusammenführen** (ähnlich HarvestMapData): Skript außerhalb des Spiels, Ergebnis als
       „Gemeinschaftsdaten" getrennt von den eigenen Daten. Hürde: Quellen sind über den Namen gespeichert (sprachabhängig).
+      Ausgearbeitet im Abschnitt „Synchronisation (Gemeinschaftsdaten)“.
 - [ ] **Anzeige feiner steuern**, z. B. für Rohstoffe Minimum–Maximum pro Plünderung statt Gesamtmenge
       (`min`/`max` werden seit Phase 1 je Kategorie und Item gespeichert). Entspricht Phase 3.
 - [ ] **Heatmap** für bestimmte Rohstoffe/Set-Items zum Farmen. Braucht Positionen (Phase 4) zumindest grob,
@@ -294,6 +295,131 @@ Account-weit bleiben nur Daten und `settings.debug`. Kopieren im Menü, Liste ü
 - Normal/Veteran in Verliesen und Prüfungen unterscheiden (`GetCurrentZoneDungeonDifficulty()`), gleiche Zonen-ID.
 - Statistiken teilen: Datei tauschen + Skript zum Zusammenführen als „Gemeinschaftsdaten" (getrennt von eigenen Daten).
   Hürde: Quellen sind über den Namen gespeichert, also sprachabhängig. Server wie bei HarvestMapData nur bei vielen Nutzern.
+
+## Synchronisation (Gemeinschaftsdaten)
+
+Stand: 24.11.2026, Konzept, noch nichts umgesetzt.
+
+**Ziel:** Die Statistiken vieler Spieler zusammenführen. Jeder sieht am Fadenkreuz zusätzlich zu den eigenen
+Zahlen die „Gemeinschaftsdaten“ – mit viel mehr Plünderungen, also verlässlicheren Prozenten.
+
+### Rahmenbedingungen
+
+- **Addons haben keinen Netzzugriff.** Austausch nur über Dateien: Das Spiel schreibt die SavedVariables beim
+  Ausloggen, bei `/reloadui` und beim normalen Beenden (nicht bei Absturz). Daten ins Spiel kommen nur als Lua-Datei
+  eines Addons, gelesen beim Laden.
+- **Eigene Daten bleiben getrennt.** Gemeinschaftsdaten werden nie in `WhatDropsHere_Saved` gemischt, sondern liegen
+  in einem eigenen Daten-Addon. Die Anzeige wählt: eigene / Gemeinschaft / beides.
+- **Alle Zähler sind addierbar:** `loots`, `gold`, `n`, `hits`, `q[...]`, `slots[...]`, `digs[...]` werden summiert,
+  `min`/`max` als Minimum/Maximum übernommen. Prozente (`hits / loots`) ergeben sich danach neu.
+- **Item-, Set-, Antiquitäten- und Zonen-IDs sind sprachunabhängig.** Problem sind nur die Quellen-Schlüssel (Name).
+
+### Bausteine
+
+```
+Spiel (SavedVariables)          Website / Server                 Du (Merge auf Befehl)          Minion
+WhatDropsHere.lua  ──Upload──▶  nimmt an, prüft, speichert  ──▶  merge-Skript: alle Stände  ──▶  WhatDropsHereData
+(im Browser bereinigt)          je anonymer ID den letzten      zusammenführen, Daten-Addon     auf ESOUI, alle
+                                Stand                           erzeugen                        bekommen das Update
+```
+
+1. **Upload-Seite (Website, kein .exe).** Datei `SavedVariables/WhatDropsHere.lua` per Drag & Drop. Im Browser:
+   Lua-Tabelle lesen, **bereinigen** (nur `zones` je Server; kein @Account, keine Charakternamen, keine Einstellungen),
+   Vorschau „das wird gesendet“, Zustimmung, senden. Läuft ohne Installation, auch auf Mac/Linux.
+   Eine .exe hätte Nachteile: SmartScreen-Warnung, Virenscanner-Fehlalarme ohne Code-Signatur, nur Windows.
+2. **Server.** Nimmt Uploads an, prüft Format und Plausibilität, speichert **je Beitragender-ID den letzten Stand**
+   (neuer Upload ersetzt den alten → keine Doppelzählung). Gibt nichts öffentlich aus außer den fertigen Daten.
+   Kandidat: Cloudflare Workers + R2/D1 (kostenlose Stufe reicht für den Anfang), alternativ kleiner VPS.
+3. **Merge-Skript (Python, bei dir, auf Befehl).** Lädt alle Stände, übersetzt Quellen-Schlüssel (siehe unten),
+   summiert, filtert Ausreißer, schreibt `WhatDropsHereData/Data.lua` + Manifest, baut das ZIP.
+4. **Verteilung über ESOUI/Minion.** Du lädst `WhatDropsHereData` hoch, Minion aktualisiert es bei allen.
+   Kein eigener Download-Weg nötig (so verteilt auch HarvestMapData seine Daten).
+5. **Addon.** Liest `WhatDropsHereData` (optionale Abhängigkeit), zeigt Gemeinschaftsdaten am Fadenkreuz und in `/wdh`.
+   Wenn das Daten-Addon fehlt, ändert sich nichts.
+
+Ein eigenes Client-Tool (automatisch hochladen und herunterladen, wie der TTC-Client) erst, wenn sich die Website bewährt hat.
+
+### Beitragender-ID (gegen Doppelzählung)
+
+- Zufällige ID, einmal vom Addon erzeugt und in den SavedVariables gespeichert (`SV.contributorId`, je Server und Account).
+  Kein Bezug zum @Account. Das Addon kann keinen echten Zufall aus dem Netz holen, aber `GetTimeStamp()`,
+  `GetGameTimeMilliseconds()` und `math.random` reichen für eine eindeutige ID.
+- Der Server ersetzt bei jedem Upload den Stand dieser ID. Wer die SavedVariables löscht, bekommt eine neue ID;
+  sein alter Stand zählt weiter, bis er verfällt (z. B. ohne Upload seit 12 Monaten) oder auf Wunsch gelöscht wird.
+- Löschwunsch: Die Upload-Seite zeigt die ID; mit ihr lässt sich der eigene Beitrag löschen.
+
+### Sprachabhängige Quellen-Schlüssel (die wichtigste Entscheidung)
+
+Quellen werden unter ihrem Namen in der Client-Sprache gespeichert („runenstein“ / „runestone“). ESO liefert für
+Vorkommen, Behälter und Leichen keine sprachunabhängige Kennung (`GetLootTargetInfo`, `GetGameCameraInteractableActionInfo`
+und `GetUnitName` geben nur Text).
+
+Möglichkeiten:
+- **A. Je Sprache getrennt zusammenführen.** Einfach und sofort machbar; Gemeinschaftsdaten je Client-Sprache.
+  Nachteil: kleinere Töpfe, deutsche Spieler sehen keine Daten englischer Spieler.
+- **B. Übersetzen beim Merge über die Sprachdateien des Spiels.** Die `.lang`-Dateien (aus den Spieldaten, z. B. mit
+  EsoExtractData; daraus baut auch LibMultilingualName seine Tabellen) enthalten jeden Text mit derselben ID in allen
+  Sprachen. Das Merge-Skript ordnet „Runenstein“ (de) und „Runestone“ (en) derselben Text-ID zu und führt beide zusammen.
+  Das Daten-Addon liefert die Namen je Sprache mit, damit es im Spiel über den Namen in der Client-Sprache sucht.
+  Risiken: ein Text kann zu mehreren IDs gehören (gleicher deutscher Name, verschiedene englische), Geschlechts-Endungen
+  (`^n`, `^f`) müssen gleich normalisiert werden wie im Addon. Nicht zuordenbare Namen bleiben in ihrer Sprache (wie A).
+- **C. Eigene Zuordnungstabelle** von Hand bzw. aus Beiträgen. Zu viel Pflege.
+
+**Empfehlung:** Mit **A** starten, **B** als Ausbau. Dafür muss das Addon **ab sofort die Client-Sprache mitspeichern**
+(`GetCVar("language.2")`, je Quelle als `rec.lang` bei der Anlage, bzw. je Upload). Das ist additiv und sollte vor 1.0
+kommen, damit vorhandene Daten zugeordnet werden können. Altdaten ohne Sprache: beim Upload die aktuelle Client-Sprache
+annehmen (passt fast immer).
+
+### Datenschutz
+
+- Gesendet werden nur Spieldaten: Zonen, Quellennamen, Item-IDs, Zähler. **Nicht** gesendet: @Account, Charakternamen,
+  Charakter-IDs, Einstellungen. Das Bereinigen passiert im Browser vor dem Senden; die Vorschau zeigt es.
+- Upload nur nach ausdrücklicher Zustimmung (Häkchen), kurzer Datenschutzhinweis auf der Seite. Server-Logs ohne IP
+  bzw. nur kurz. Für eine öffentliche Website in Deutschland voraussichtlich Impressum und Datenschutzerklärung nötig.
+- Die Zeitstempel (`rec.last`) verraten Spielzeiten; beim Upload weglassen oder auf den Tag runden.
+
+### Datenqualität und Missbrauch
+
+- Formatprüfung auf dem Server (Struktur, Typen, Größenlimit je Upload).
+- Plausibilität im Merge: unbekannte Item-IDs verwerfen, Mengen je Plünderung begrenzen (z. B. `n / loots` > 50 →
+  verdächtig), `hits` ≤ `loots`.
+- Ausreißer: Beiträge, die stark vom Rest abweichen, mit weniger Gewicht oder gar nicht übernehmen; Quelle erst ab
+  mehreren Beitragenden zeigen (z. B. ≥ 3).
+- Begrenzung der Uploads je ID und Tag.
+
+### Versionen und Formate
+
+- `uploadVersion` im Upload, `dataVersion` im Daten-Addon. Das Addon zeigt Gemeinschaftsdaten nur, wenn es deren
+  `dataVersion` kennt.
+- `SAVED_VERSION` der Beitragenden mitsenden; das Merge-Skript wendet dieselben Migrationen an wie das Addon
+  (z. B. herumliegende Gegenstände, Datenversion 3).
+- Spiel-Patches können Item-IDs und Namen ändern; Daten je Spiel-API-Version mitführen (`GetAPIVersion()`),
+  alte Beiträge nach großen Patches ggf. abwerten.
+
+### Größe
+
+- Eigene SavedVariables heute ~0,5 MB. Gemeinschaftsdaten könnten mehrere MB groß werden. Ladezeit und Speicher
+  beim Login beachten: nur Zähler, keine Itemlinks, Kategorien/Namen per ID; ggf. je Zone eine eigene Tabelle, die
+  erst beim Betreten gebraucht wird (die Datei wird trotzdem ganz geladen).
+
+### Reihenfolge
+
+1. **Addon vorbereiten** (nächste Version): `rec.lang` bzw. `SV.lang` und `SV.contributorId` speichern. Additiv.
+2. **Merge-Skript lokal** mit deinen eigenen Daten (EU + NA, mehrere Accounts) als Testfall; Format von
+   `WhatDropsHereData` festlegen; Anzeige „Gemeinschaft“ im Addon.
+3. **Upload-Seite + Server** (minimal), erst mit Testern aus der Gilde.
+4. **Erstes `WhatDropsHereData` auf ESOUI.**
+5. **Ausbau B** (Übersetzung über Sprachdateien), Plausibilitätsregeln nach den ersten echten Daten schärfen.
+
+### Offene Fragen
+
+- [ ] Server: Cloudflare Workers oder VPS? Domain? Wer betreibt es langfristig?
+- [ ] Rechtliches: Impressum/Datenschutzerklärung für die Upload-Seite; ESOUI- und ZOS-Regeln für externe Dienste prüfen
+      (Lesen der SavedVariables durch externe Tools ist üblich: TTC, Master Merchant, HarvestMap).
+- [ ] Sprachdateien (Variante B): Wie kommt das Merge-Skript an die `.lang`-Dateien aller Sprachen, und dürfen
+      daraus abgeleitete Namen im Daten-Addon verteilt werden?
+- [ ] Ab wie vielen Beitragenden wird eine Quelle angezeigt?
+- [ ] Gemeinschaftsdaten auch in `/wdh` und der Zonenliste, oder nur am Fadenkreuz?
 
 ## Vor Version 1.0: Datenmodell festlegen
 
@@ -321,7 +447,8 @@ Offene Entscheidungen (vor 1.0):
       vorher `WDH_Saved` für alle. Übernahme der Altdaten durch den ersten Account nach dem Update (0.3.1).
       **Vor 1.0:** `WDH_Saved` aus `## SavedVariables` im Manifest streichen.
 - [ ] **Sprachabhängige Schlüssel:** Quellen über den Namen in der Client-Sprache. Für das Zusammenführen mehrerer
-      Spieler (Merge-Tool) ein Problem. Gibt es eine sprachunabhängige Kennung? Sonst bewusst so lassen und dokumentieren.
+      Spieler ein Problem; ESO hat keine sprachunabhängige Kennung. Entscheidung siehe „Synchronisation“:
+      Schlüssel bleibt der Name, dazu **Client-Sprache je Quelle speichern** (`rec.lang`), Übersetzung erst beim Merge.
 - [ ] **Sammelplünderung (`#aoe`):** bisher im Spiel nie beobachtet. Schlüssel beibehalten oder streichen?
 - [x] **Herumliegende Gegenstände** (08.11.2026): frei → nicht speichern, gestohlen → Sammeleintrag je Zone.
       Umgesetzt in 0.3.1 mit Migration (Datenversion 3). Offen: Gibt es freie Einzelstücke, die keine Waffe/Rüstung
